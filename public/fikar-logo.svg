@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50">
+  <!-- Text fikar and plus sign -->
+  <text x="3" y="38" font-family="'Times New Roman', serif" font-size="40" font-style="italic" font-weight="bold" letter-spacing="-1">fikar</text>
+  
+  <!-- Red plus symbol -->
+  <g transform="translate(90, 10)">
+    <circle cx="15" cy="15" r="15" fill="#FF0000"/>
+    <path d="M15 7 L15 23 M7 15 L23 15" stroke="white" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg> 
