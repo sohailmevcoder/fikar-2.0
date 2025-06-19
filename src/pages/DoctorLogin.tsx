@@ -69,8 +69,7 @@ export default function DoctorLogin() {
                     <img src="/fikar-logo.svg" alt="Fikar Plus Logo" className="h-20" />
                 </div>
 
-                <h2 className="text-center text-xl font-semibold text-gray-800 mb-1">Doctor Portal</h2>
-                <p className="text-center text-sm text-gray-500 mb-6">Sign in or create an account</p>
+               
 
                 <h3 className="text-center text-lg font-semibold text-slate-700 mb-4">Doctor Access</h3>
                 <p className="text-sm text-center text-gray-500 mb-6">Choose how you want to access your account</p>
