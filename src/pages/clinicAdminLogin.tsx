@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import 'tailwindcss/tailwind.css';
 
 export default function ClinicAdminLogin() {
@@ -14,6 +15,7 @@ export default function ClinicAdminLogin() {
     const [resendTimer, setResendTimer] = useState(0);
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+    const [showPassword, setShowPassword] = useState(false); 
 
     const navigate = useNavigate();
 
@@ -93,7 +95,6 @@ export default function ClinicAdminLogin() {
         <div className="min-h-screen bg-[#f9fafb] flex items-center justify-center px-4 relative">
             {showToast && (
                 <div className="absolute bottom-4 right-4 bg-blue-50 text-blue-900 text-sm p-4 rounded-md shadow-lg border border-blue-200 max-w-xs w-full">
-                    <p className="font-semibold">OTP Sent</p>
                     <p>{toastMessage}</p>
                 </div>
             )}
@@ -167,14 +168,23 @@ export default function ClinicAdminLogin() {
                     {activeTab === 'password' && (
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Password</label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => { setPassword(e.target.value); setPasswordError(''); }}
-                                placeholder="********"
-                                required
-                                className={`mt-1 w-full px-4 py-2 border ${passwordError ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring focus:ring-blue-200`}
-                            />
+                            <div className="relative mt-1">
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={(e) => { setPassword(e.target.value); setPasswordError(''); }}
+                                    placeholder="********"
+                                    required
+                                    className={`w-full px-4 py-2 border ${passwordError ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring focus:ring-blue-200`}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                >
+                                    {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                                </button>
+                            </div>
                             {passwordError && <p className="text-red-500 text-xs mt-1">{passwordError}</p>}
                             <div className="text-right mt-1">
                                 <a href="#" className="text-sm text-blue-600">Forgot Password?</a>
@@ -200,7 +210,7 @@ export default function ClinicAdminLogin() {
                                             type="text"
                                             value={otp}
                                             onChange={(e) => setOtp(e.target.value)}
-                                            placeholder="Enter 6-digit OTP)"
+                                            placeholder="Enter 6-digit OTP"
                                             required
                                             className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
                                         />

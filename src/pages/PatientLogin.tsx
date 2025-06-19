@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react'; // 👁️ Icons
 import 'tailwindcss/tailwind.css';
 
 export default function PatientLogin() {
@@ -14,6 +15,7 @@ export default function PatientLogin() {
   const [resendTimer, setResendTimer] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // 👁️ Toggle password
 
   const navigate = useNavigate();
 
@@ -95,10 +97,9 @@ export default function PatientLogin() {
 
   return (
     <div className="min-h-screen bg-[#f9fafb] flex items-center justify-center px-4 relative">
-      {/* Toast Notification */}
       {showToast && (
         <div className="absolute bottom-4 right-4 bg-blue-50 text-blue-900 text-sm p-4 rounded-md shadow-lg border border-blue-200 max-w-xs w-full">
-          <p className="font-semibold">OTP Sent</p>
+         
           <p>{toastMessage}</p>
         </div>
       )}
@@ -127,7 +128,7 @@ export default function PatientLogin() {
             }}
             className={`flex-1 py-2 text-sm font-medium ${activeTab === 'password' ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-600'}`}
           >
-            Password
+            Email Login
           </button>
           <button
             type="button"
@@ -182,19 +183,27 @@ export default function PatientLogin() {
           {activeTab === 'password' && (
             <div>
               <label className="block text-sm font-medium text-gray-700">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setPasswordError('');
-                }}
-                placeholder="********"
-                required
-                className={`mt-1 w-full px-4 py-2 border ${
-                  passwordError ? 'border-red-500' : 'border-gray-300'
-                } rounded-md focus:outline-none focus:ring focus:ring-blue-200`}
-              />
+              <div className="relative mt-1">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setPasswordError('');
+                  }}
+                  placeholder="********"
+                  required
+                  className={`w-full px-4 py-2 border ${
+                    passwordError ? 'border-red-500' : 'border-gray-300'
+                  } rounded-md focus:outline-none focus:ring focus:ring-blue-200 pr-10`}
+                />
+                <div
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                </div>
+              </div>
               {passwordError && (
                 <p className="text-red-500 text-xs mt-1">{passwordError}</p>
               )}
@@ -260,7 +269,20 @@ export default function PatientLogin() {
           Don&apos;t have an account?{' '}
           <a href="/patient-signup" className="text-blue-600 font-medium">Create Account</a>
         </div>
+         <div className="text-center text-xs text-gray-500 mt-6">
+  Need help? Contact{' '}
+  <a
+    href="mailto:support@fikarplus.com"
+    className="text-blue-600 transition duration-200 ease-in-out active:shadow-lg active:shadow-blue-300"
+  >
+    support@fikarplus.com
+  </a>
+</div>
+                  <div className="text-center text-[11px] text-gray-400 mt-4">© 2025 Fikar Plus. All rights reserved.</div>
       </div>
     </div>
+    
+
+    
   );
 }
