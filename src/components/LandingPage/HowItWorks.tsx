@@ -1,6 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
+import fImage from '../../assests/f.png';
+
+
 
 const steps = [
   {
@@ -40,7 +43,7 @@ const steps = [
     title: 'Get the Correct Time to Visit',
     description:
       'Our smart system suggests the best time slots based on your doctor’s current workload and traffic trends.',
-    image: 'blob:https://web.whatsapp.com/8a767817-bb76-4f7e-bdea-71de788a08c6'
+    image: fImage
   },
 ];
 
