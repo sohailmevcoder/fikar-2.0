@@ -65,7 +65,7 @@ export default {
 				fikar: {
 					primary: '#0000FF', // Red color from the Fikar+ logo
 					secondary: '#0C4A6E', // Dark blue for contrast
-					accent: '#FF3333', // Lighter red for accents
+					accent: '#ADD8E6', // Lighter red for accents
 					light: '#FFEEEE', // Light red background
 					dark: '#0C4A6E', // Dark blue for text
 					success: '#10B981', // Green for availability

@@ -1,301 +1,212 @@
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, Calendar, Clock, User, ChevronLeft, Filter, MapPin } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Link, useLocation } from 'react-router-dom';
+import {
+  Search,
+  Calendar,
+  ChevronRight,
+  MapPin,
+  FileText,
+  User,
+  Home,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import DoctorCard from '@/components/UI/DoctorCard';
 import { useToast } from '@/hooks/use-toast';
 
-// Sample data for demonstration
 const doctors = [
   {
     id: 1,
-    name: 'Vivek Sharma',
+    name: 'Rajesh Kumar',
     specialty: 'Cardiologist',
-    location: 'City Hospital, Gwalior',
-    distance: '2.3 km',
-    rating: 4.8,
-    reviewCount: 124,
-    image: 'https://randomuser.me/api/portraits/men/1.jpg',
-    status: 'available' as const,
-    phoneNumber: '+91 98765 43210'
+    image: '/images/doc1.jpg',
   },
   {
     id: 2,
-    name: 'Priya Patel',
-    specialty: 'Pediatrician',
-    location: 'LifeCare Clinic, Gwalior',
-    distance: '3.1 km',
-    rating: 4.6,
-    reviewCount: 89,
-    image: 'https://randomuser.me/api/portraits/women/2.jpg',
-    status: 'busy' as const,
-    queueLength: 3,
-    phoneNumber: '+91 98765 12345'
-  },
-  {
-    id: 3,
-    name: 'Ajay Kumar',
-    specialty: 'Neurologist',
-    location: 'Brain & Spine Center, Gwalior',
-    distance: '1.5 km',
-    rating: 4.9,
-    reviewCount: 156,
-    image: 'https://randomuser.me/api/portraits/men/3.jpg',
-    status: 'offline' as const,
-    nextAvailable: '2:30 PM Tomorrow',
-    phoneNumber: '+91 87654 32109'
-  },
-  {
-    id: 4,
-    name: 'Meera Singh',
+    name: 'Priya Sharma',
     specialty: 'Dermatologist',
-    location: 'Skin Care Clinic, Gwalior',
-    distance: '4.2 km',
-    rating: 4.7,
-    reviewCount: 112,
-    image: 'https://randomuser.me/api/portraits/women/4.jpg',
-    status: 'available' as const,
-    phoneNumber: '+91 76543 21098'
+    image: '/images/doc2.jpg',
   },
-  {
-    id: 5,
-    name: 'Rahul Verma',
-    specialty: 'Orthopedic Surgeon',
-    location: 'Bone & Joint Hospital, Gwalior',
-    distance: '3.8 km',
-    rating: 4.5,
-    reviewCount: 78,
-    image: 'https://randomuser.me/api/portraits/men/5.jpg',
-    status: 'busy' as const,
-    queueLength: 2,
-    phoneNumber: '+91 65432 10987'
-  }
 ];
 
-// Sample appointments
 const appointments = [
   {
     id: 1,
-    doctorName: 'Dr. Vivek Sharma',
+    date: '31 May 2025',
+    time: '10:30 AM',
+    doctor: 'Dr. Rajesh Kumar',
     specialty: 'Cardiologist',
-    date: 'Today',
-    time: '2:30 PM',
-    queuePosition: 2,
-    status: 'Upcoming',
-    location: 'City Hospital, Gwalior',
-    image: 'https://randomuser.me/api/portraits/men/1.jpg'
+    location: 'City Heart Hospital',
+    status: 'Confirmed',
+    statusColor: 'green',
+    detailsLink: '/patient-appointments/1',
   },
   {
     id: 2,
-    doctorName: 'Dr. Priya Patel',
-    specialty: 'Pediatrician',
-    date: 'Tomorrow',
-    time: '11:00 AM',
-    status: 'Confirmed',
-    location: 'LifeCare Clinic, Gwalior',
-    image: 'https://randomuser.me/api/portraits/women/2.jpg'
+    date: '3 June 2025',
+    time: '2:15 PM',
+    doctor: 'Dr. Priya Sharma',
+    specialty: 'Dermatologist',
+    location: 'Skin Care Clinic',
+    status: 'Pending',
+    statusColor: 'yellow',
+    detailsLink: '/patient-appointments/2',
   },
-  {
-    id: 3,
-    doctorName: 'Dr. Ajay Kumar',
-    specialty: 'Neurologist',
-    date: '15 Jun 2023',
-    time: '4:00 PM',
-    status: 'Completed',
-    location: 'Brain & Spine Center, Gwalior',
-    image: 'https://randomuser.me/api/portraits/men/3.jpg'
-  }
 ];
 
+const DashboardCard = ({ icon, title, desc, to, color }) => (
+  <div className={`rounded-lg border bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer border-l-4 border-${color}-500`}>
+    <div className="p-6 pt-5">
+      <div className="flex items-center">
+        <div className={`rounded-full bg-${color}-100 p-3 mr-4`}>
+          {icon}
+        </div>
+        <div>
+          <h3 className="font-medium text-gray-900">{title}</h3>
+          <p className="text-sm text-gray-500">{desc}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const Sidebar = ({ onSelect }) => {
+  const location = useLocation();
+  const isDashboard = location.pathname === '/patient-dashboard';
+
+  return (
+    <div className="w-64 h-screen bg-white border-r border-gray-200 fixed">
+      <div className="flex flex-col h-full">
+        <div className="flex justify-center py-4">
+          <a href="/">
+            <img src="/fikar-logo.svg" alt="Fikar Logo" className="h-12 w-auto" />
+          </a>
+        </div>
+        <div className="px-6 py-4 border-t border-b border-gray-200">
+          <div className="flex items-center">
+            <span className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-sm font-bold">RA</span>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-900">Rahul Agarwal</p>
+              <p className="text-xs text-gray-500">rahul@example.com</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 px-4 py-4 overflow-y-auto">
+          <nav className="space-y-1">
+            <button
+              onClick={() => onSelect('dashboard')}
+              className={`w-full text-left flex items-center px-3 py-2.5 text-sm font-medium rounded-lg ${isDashboard ? 'bg-fikar-primary/10 text-fikar-primary' : 'text-gray-700 hover:text-fikar-primary hover:bg-fikar-primary/5'}`}
+            >
+              <Home className="h-5 w-5 mr-2" /> Dashboard
+            </button>
+            <Link to="/patient-profile" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-fikar-primary hover:bg-fikar-primary/5">
+              <User className="h-5 w-5 mr-2 text-gray-400" /> Profile
+            </Link>
+            <button className="w-full text-left flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-fikar-primary hover:bg-fikar-primary/5">
+              <Calendar className="h-5 w-5 mr-2" /> New Button (No Action)
+            </button>
+          </nav>
+        </div>
+        <div className="p-4">
+          <div className="bg-gradient-to-r from-fikar-primary to-fikar-secondary p-4 rounded-lg text-white">
+            <h4 className="text-sm font-medium mb-1">Need Help?</h4>
+            <p className="text-xs mb-3 opacity-90">Contact our support team</p>
+            <Button className="w-full bg-white text-fikar-primary hover:bg-gray-100">Contact Support</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const UserDashboard = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPanel, setSelectedPanel] = useState('dashboard');
   const { toast } = useToast();
-  
-  const handleSearch = (e: React.FormEvent) => {
+
+  const handleSearch = (e) => {
     e.preventDefault();
     toast({
-      title: "Search initiated",
-      description: `Searching for "${searchTerm}"`,
-    });
-  };
-  
-  const handleBooking = (doctorName: string) => {
-    toast({
-      title: "Appointment Booked",
-      description: `Your appointment with ${doctorName} has been confirmed.`,
-      variant: "default",
+      title: 'Search initiated',
+      description: `Searching...`,
     });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto">
-        {/* Top navigation with back button */}
-        <div className="bg-white border-b border-gray-200 px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Link to="/" className="text-fikar-primary hover:text-fikar-secondary">
-                <ChevronLeft className="h-5 w-5" />
-              </Link>
-              <h1 className="ml-4 text-xl font-semibold text-fikar-dark">Find Doctors</h1>
+    <div className="flex">
+      <Sidebar onSelect={setSelectedPanel} />
+      <main className="ml-64 w-full bg-white min-h-screen p-6">
+        {selectedPanel === 'dashboard' && (
+          <>
+            <div className="space-y-1 mb-4">
+              <h1 className="text-2xl font-bold text-gray-800">Welcome back, Rahul!</h1>
+              <p className="text-gray-600">Manage your appointments and health information</p>
             </div>
-            <Link to="/user-profile" className="inline-flex items-center text-fikar-primary hover:text-fikar-secondary">
-              <User className="h-5 w-5" />
-              <span className="ml-2">My Profile</span>
-            </Link>
-          </div>
-        </div>
-        
-        {/* Search and filter section */}
-        <div className="bg-white shadow-sm px-4 py-5 sm:px-6 lg:px-8">
-          <form onSubmit={handleSearch}>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input 
-                  type="text" 
-                  placeholder="Search by doctor name, specialty, or clinic" 
-                  className="pl-10"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <Button type="submit" className="bg-fikar-primary hover:bg-fikar-secondary">Search</Button>
-              <Button variant="outline" className="sm:ml-2 border-fikar-primary text-fikar-primary hover:bg-fikar-light">
-                <Filter className="h-4 w-4 mr-2" /> Filter
-              </Button>
+
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+              <DashboardCard icon={<MapPin className="h-6 w-6 text-blue-600" />} color="blue" title="Near Me" desc="Find doctors & clinics nearby" to="/patient-locations" />
+              <DashboardCard icon={<Calendar className="h-6 w-6 text-green-600" />} color="green" title="Appointments" desc="View & manage appointments" to="/patient-appointments" />
+              <DashboardCard icon={<Search className="h-6 w-6 text-purple-600" />} color="purple" title="Search" desc="Find doctors & hospitals" to="/patient-search" />
+              <DashboardCard icon={<FileText className="h-6 w-6 text-amber-600" />} color="amber" title="Reports" desc="Upload & view medical reports" to="/patient-reports" />
             </div>
-          </form>
-        </div>
-        
-        {/* Main content */}
-        <div className="py-6 px-4 sm:px-6 lg:px-8">
-          <Tabs defaultValue="find-doctors" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="find-doctors">Find Doctors</TabsTrigger>
-              <TabsTrigger value="appointments">My Appointments</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="find-doctors" className="space-y-4">
+
+            <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-medium text-fikar-dark">Available Doctors</h2>
-                <div className="flex items-center text-sm text-gray-500">
-                  <Clock className="h-4 w-4 mr-1" />
-                  <span>Last updated: Just now</span>
-                </div>
+                <h2 className="text-lg font-semibold text-gray-900">Upcoming Appointments</h2>
+                <Link to="/patient-appointments" className="text-sm text-blue-600 hover:underline flex items-center">
+                  View all <ChevronRight className="h-4 w-4 ml-1" />
+                </Link>
               </div>
-              
-              <div className="grid grid-cols-1 gap-6">
-                {doctors.map((doctor) => (
-                  <DoctorCard
-                    key={doctor.id}
-                    name={doctor.name}
-                    specialty={doctor.specialty}
-                    location={doctor.location}
-                    distance={doctor.distance}
-                    rating={doctor.rating}
-                    reviewCount={doctor.reviewCount}
-                    image={doctor.image}
-                    status={doctor.status}
-                    queueLength={doctor.queueLength}
-                    nextAvailable={doctor.nextAvailable}
-                    phoneNumber={doctor.phoneNumber}
-                    onBook={() => handleBooking(`Dr. ${doctor.name}`)}
-                    onViewProfile={() => {
-                      toast({
-                        title: "Profile View",
-                        description: `Viewing profile of Dr. ${doctor.name}`,
-                      });
-                    }}
-                  />
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="appointments">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-medium text-fikar-dark">Your Appointments</h2>
-                  <Button variant="outline" className="border-fikar-primary text-fikar-primary hover:bg-fikar-light">
-                    <Calendar className="h-4 w-4 mr-2" /> Book New
-                  </Button>
-                </div>
-                
-                {appointments.map((appointment) => (
-                  <div 
-                    key={appointment.id}
-                    className="bg-white rounded-lg shadow p-4 border-l-4 border-fikar-primary"
-                  >
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 h-12 w-12 rounded-full overflow-hidden">
-                        <img 
-                          src={appointment.image} 
-                          alt={appointment.doctorName} 
-                          className="h-full w-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = 'https://via.placeholder.com/150?text=' + appointment.doctorName.charAt(3);
-                          }}
-                        />
+              <div className="space-y-4">
+                {appointments.map((appt) => (
+                  <div key={appt.id} className="rounded-lg border bg-white shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                    <div className="flex flex-col sm:flex-row">
+                      <div className="bg-gradient-to-br from-blue-600 to-blue-400 text-white p-4 sm:w-1/4 text-center flex flex-col justify-center items-center">
+                        <div className="text-lg font-bold">{appt.date}</div>
+                        <div className="text-sm">{appt.time}</div>
+                        <div className={`mt-2 px-2 py-0.5 rounded-full text-xs font-medium ${appt.statusColor === 'green' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                          {appt.status}
+                        </div>
                       </div>
-                      <div className="ml-4 flex-1">
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-lg font-semibold text-fikar-dark">{appointment.doctorName}</h3>
-                          <Badge 
-                            className={`
-                              ${appointment.status === 'Upcoming' ? 'bg-amber-100 text-amber-800' : 
-                                appointment.status === 'Confirmed' ? 'bg-green-100 text-green-800' : 
-                                'bg-gray-100 text-gray-800'} 
-                              border-0
-                            `}
-                          >
-                            {appointment.status}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-600">{appointment.specialty}</p>
-                        <div className="mt-2 flex items-center text-sm text-gray-500">
-                          <Calendar className="h-4 w-4 mr-1" />
-                          <span>{appointment.date} at {appointment.time}</span>
-                        </div>
-                        <div className="mt-1 flex items-center text-sm text-gray-500">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          <span>{appointment.location}</span>
-                        </div>
-                        
-                        {appointment.queuePosition && (
-                          <div className="mt-3 p-2 bg-fikar-light rounded-lg">
-                            <div className="flex items-center">
-                              <div className="h-8 w-8 bg-fikar-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
-                                {appointment.queuePosition}
-                              </div>
-                              <p className="ml-2 text-sm font-medium text-fikar-primary">
-                                Your position in queue • Est. wait: ~{appointment.queuePosition * 15} mins
-                              </p>
-                            </div>
+                      <div className="p-4 sm:w-3/4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-semibold text-gray-900">{appt.doctor}</h3>
+                            <p className="text-sm text-gray-500">{appt.specialty}</p>
                           </div>
-                        )}
+                          <Link to={appt.detailsLink} className="text-sm border rounded px-3 py-1 hover:bg-gray-100">
+                            Details
+                          </Link>
+                        </div>
+                        <div className="mt-2 flex items-center text-sm text-gray-500">
+                          <MapPin className="h-4 w-4 mr-1 text-gray-400" /> {appt.location}
+                        </div>
+                        <div className="mt-4 flex gap-2">
+                          <Button variant="outline" className="text-blue-600 border-blue-300">Check-in</Button>
+                          <Button variant="outline" className="text-red-600 border-red-300">Reschedule</Button>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="mt-4 flex space-x-3">
-                      <Button variant="outline" size="sm" className="border-fikar-primary text-fikar-primary hover:bg-fikar-light">
-                        Reschedule
-                      </Button>
-                      <Button variant="outline" size="sm" className="border-red-400 text-red-500 hover:bg-red-50">
-                        Cancel
-                      </Button>
                     </div>
                   </div>
                 ))}
               </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Recently Visited Doctors</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {doctors.map((doctor) => (
+                  <div key={doctor.id} className="p-4 bg-gray-50 border rounded shadow-sm text-center">
+                    <img src={doctor.image} alt={doctor.name} className="w-16 h-16 rounded-full mx-auto mb-2" />
+                    <h3 className="font-semibold text-lg">Dr. {doctor.name}</h3>
+                    <p className="text-sm text-gray-600">{doctor.specialty}</p>
+                    <Button size="sm" className="mt-2 bg-blue-500 hover:bg-blue-600 text-white" onClick={() => toast({ title: 'Booking', description: `Booking Dr. ${doctor.name}` })}>
+                      Book
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </main>
     </div>
   );
 };

@@ -1,424 +1,330 @@
-
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  Users, 
-  Calendar, 
-  Clock, 
-  User, 
-  Settings, 
-  ChevronLeft, 
-  PlusCircle,
-  Hospital,
-  Activity,
-  Stethoscope,
-  UserPlus,
-  BarChart,
-  Search
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
+import { Users, Calendar, Clock3, UserPlus, BarChart2, Search, X } from 'lucide-react';
+import { Dialog } from '@headlessui/react';
 
-// Sample data for the clinic dashboard
-const clinicStats = {
-  totalDoctors: 12,
-  activeNow: 8,
-  totalAppointments: 124,
-  completedToday: 45,
-  waitingPatients: 16,
-  averageWaitTime: '28 mins'
-};
-
-// Sample data for doctors
-const doctors = [
+const defaultDoctors = [
   {
-    id: 1,
     name: 'Dr. Vivek Sharma',
     specialty: 'Cardiologist',
+    available: 'Now',
+    todayAppts: 15,
     status: 'available',
-    appointmentsToday: 15,
-    nextAvailable: 'Now',
-    image: 'https://randomuser.me/api/portraits/men/1.jpg'
+    img: 'https://randomuser.me/api/portraits/men/75.jpg'
   },
   {
-    id: 2,
     name: 'Dr. Priya Patel',
     specialty: 'Pediatrician',
+    available: '~45 mins',
+    todayAppts: 12,
     status: 'busy',
-    appointmentsToday: 12,
-    currentQueue: 3,
-    nextAvailable: '~45 mins',
-    image: 'https://randomuser.me/api/portraits/women/2.jpg'
+    img: 'https://randomuser.me/api/portraits/women/44.jpg'
   },
   {
-    id: 3,
     name: 'Dr. Ajay Kumar',
     specialty: 'Neurologist',
-    status: 'offline',
-    appointmentsToday: 8,
-    nextAvailable: 'Tomorrow, 9 AM',
-    image: 'https://randomuser.me/api/portraits/men/3.jpg'
+    available: 'Tomorrow, 9 AM',
+    todayAppts: 8,
+    status: 'available',
+    img: 'https://randomuser.me/api/portraits/men/12.jpg'
   },
   {
-    id: 4,
     name: 'Dr. Meera Singh',
     specialty: 'Dermatologist',
+    available: 'Now',
+    todayAppts: 10,
     status: 'available',
-    appointmentsToday: 10,
-    nextAvailable: 'Now',
-    image: 'https://randomuser.me/api/portraits/women/4.jpg'
-  }
-];
-
-// Sample upcoming appointments
-const todaysAppointments = [
-  {
-    id: 1,
-    patientName: 'Rahul Verma',
-    doctorName: 'Dr. Vivek Sharma',
-    time: '10:00 AM',
-    status: 'completed',
-    phone: '+91 98765 43210'
+    img: 'https://randomuser.me/api/portraits/women/10.jpg'
   },
-  {
-    id: 2,
-    patientName: 'Aisha Khan',
-    doctorName: 'Dr. Priya Patel',
-    time: '10:15 AM',
-    status: 'in-progress',
-    phone: '+91 87654 32109'
-  },
-  {
-    id: 3,
-    patientName: 'Vikram Malhotra',
-    doctorName: 'Dr. Ajay Kumar',
-    time: '11:00 AM',
-    status: 'waiting',
-    phone: '+91 76543 21098'
-  },
-  {
-    id: 4,
-    patientName: 'Neha Gupta',
-    doctorName: 'Dr. Meera Singh',
-    time: '11:30 AM',
-    status: 'confirmed',
-    phone: '+91 65432 10987'
-  },
-  {
-    id: 5,
-    patientName: 'Suresh Patel',
-    doctorName: 'Dr. Vivek Sharma',
-    time: '12:00 PM',
-    status: 'waiting',
-    phone: '+91 54321 09876'
-  }
 ];
 
 const AdminDashboard = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const { toast } = useToast();
-  
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "Search initiated",
-      description: `Searching for "${searchTerm}"`,
-    });
-  };
-  
+  const [query, setQuery] = useState('');
+  const [doctors, setDoctors] = useState(defaultDoctors);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newDoctor, setNewDoctor] = useState({
+    name: '',
+    specialty: '',
+    available: '',
+    img: '',
+    todayAppts: 0,
+    status: 'available'
+  });
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editDoctorIndex, setEditDoctorIndex] = useState(null);
+
+  const filteredDoctors = doctors.filter(
+    (doc) =>
+      doc.name.toLowerCase().includes(query.toLowerCase()) ||
+      doc.specialty.toLowerCase().includes(query.toLowerCase())
+  );
+
   const handleAddDoctor = () => {
-    toast({
-      title: "Add Doctor",
-      description: "Redirecting to doctor registration form.",
-    });
+    setDoctors([newDoctor, ...doctors]);
+    setNewDoctor({ name: '', specialty: '', available: '', img: '', todayAppts: 0, status: 'available' });
+    setIsModalOpen(false);
+  };
+
+  const handleEditDoctor = () => {
+    const updatedDoctors = [...doctors];
+    updatedDoctors[editDoctorIndex] = newDoctor;
+    setDoctors(updatedDoctors);
+    setNewDoctor({ name: '', specialty: '', available: '', img: '', todayAppts: 0, status: 'available' });
+    setIsEditModalOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto">
-        {/* Top navigation with back button */}
-        <div className="bg-white border-b border-gray-200 px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Link to="/" className="text-fikar-primary hover:text-fikar-secondary">
-                <ChevronLeft className="h-5 w-5" />
-              </Link>
-              <h1 className="ml-4 text-xl font-semibold text-fikar-dark">Clinic Admin</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link to="/admin-profile" className="text-fikar-primary hover:text-fikar-secondary flex items-center">
-                <User className="h-5 w-5" />
-                <span className="ml-2 hidden sm:inline">City Hospital</span>
-              </Link>
-              <Link to="/admin-settings" className="text-gray-500 hover:text-fikar-primary">
-                <Settings className="h-5 w-5" />
-              </Link>
-            </div>
+    <div className="p-6 space-y-6">
+      {/* Dashboard Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="flex flex-col items-start p-4">
+            <Users className="text-blue-600" />
+            <p className="text-xl font-semibold">{doctors.length}</p>
+            <span className="text-sm text-green-600">{doctors.filter(d => d.status === 'available').length} active now</span>
+            <p className="text-sm text-gray-500">Doctors</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex flex-col items-start p-4">
+            <Calendar className="text-purple-600" />
+            <p className="text-xl font-semibold">124</p>
+            <span className="text-sm text-green-600">45 completed today</span>
+            <p className="text-sm text-gray-500">Appointments</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex flex-col items-start p-4">
+            <Users className="text-orange-600" />
+            <p className="text-xl font-semibold">16</p>
+            <span className="text-sm text-orange-600">Across all doctors</span>
+            <p className="text-sm text-gray-500">Waiting</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex flex-col items-start p-4">
+            <Clock3 className="text-blue-600" />
+            <p className="text-xl font-semibold">28 mins</p>
+            <span className="text-sm text-orange-600">Average wait time</span>
+            <p className="text-sm text-gray-500">Wait Time</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="flex justify-between items-start gap-4 flex-wrap">
+        {/* Search Bar */}
+        <div className="relative w-full max-w-md">
+          <div className="flex items-center rounded-md border px-3 py-2 bg-white shadow-sm">
+            <Search className="w-4 h-4 text-gray-500 mr-2" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search doctors, patients, or appointments..."
+              className="w-full outline-none text-sm"
+            />
           </div>
-        </div>
-        
-        {/* Clinic Statistics */}
-        <div className="px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-fikar-dark">Clinic Dashboard</h2>
-            <div className="text-sm text-gray-500">
-              <span>{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">Doctors</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center">
-                  <Stethoscope className="h-6 w-6 text-fikar-primary mr-2" />
-                  <span className="text-3xl font-bold text-fikar-dark">{clinicStats.totalDoctors}</span>
-                </div>
-                <div className="mt-1 text-xs text-green-600">{clinicStats.activeNow} active now</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">Appointments</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center">
-                  <Calendar className="h-6 w-6 text-fikar-primary mr-2" />
-                  <span className="text-3xl font-bold text-fikar-dark">{clinicStats.totalAppointments}</span>
-                </div>
-                <div className="mt-1 text-xs text-green-600">{clinicStats.completedToday} completed today</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">Waiting</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center">
-                  <Users className="h-6 w-6 text-amber-500 mr-2" />
-                  <span className="text-3xl font-bold text-fikar-dark">{clinicStats.waitingPatients}</span>
-                </div>
-                <div className="mt-1 text-xs text-amber-600">Across all doctors</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">Wait Time</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center">
-                  <Clock className="h-6 w-6 text-fikar-secondary mr-2" />
-                  <span className="text-3xl font-bold text-fikar-dark">{clinicStats.averageWaitTime}</span>
-                </div>
-                <div className="mt-1 text-xs text-amber-600">Average wait time</div>
-              </CardContent>
-            </Card>
-            
-            <Card className="col-span-2">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-700">Quick Actions</h3>
+          {query && (
+            <div className="absolute z-10 mt-1 w-full bg-white border shadow-md rounded-md max-h-60 overflow-y-auto">
+              {filteredDoctors.length > 0 ? (
+                filteredDoctors.map((doc, i) => (
+                  <div
+                    key={i}
+                    className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm"
+                    onClick={() => setQuery(doc.name)}
+                  >
+                    {doc.name} - <span className="text-gray-500">{doc.specialty}</span>
                   </div>
-                  <div className="flex space-x-2">
-                    <Button size="sm" onClick={handleAddDoctor} className="bg-fikar-primary hover:bg-fikar-secondary">
-                      <UserPlus className="h-4 w-4 mr-1" /> Add Doctor
-                    </Button>
-                    <Button size="sm" variant="outline" className="border-fikar-primary text-fikar-primary hover:bg-fikar-light">
-                      <BarChart className="h-4 w-4 mr-1" /> Reports
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-        
-        {/* Search bar */}
-        <div className="px-4 sm:px-6 lg:px-8">
-          <form onSubmit={handleSearch}>
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input 
-                type="text" 
-                placeholder="Search doctors, patients, or appointments..." 
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+                ))
+              ) : (
+                <div className="px-4 py-2 text-sm text-gray-500">No results found</div>
+              )}
             </div>
-          </form>
+          )}
         </div>
-        
-        {/* Main content */}
-        <div className="px-4 py-6 sm:px-6 lg:px-8">
-          <Tabs defaultValue="doctors" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="doctors">Doctors</TabsTrigger>
-              <TabsTrigger value="appointments">Today's Appointments</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="doctors" className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium text-fikar-dark">Doctor Status</h2>
-                <Button variant="outline" onClick={handleAddDoctor} className="border-fikar-primary text-fikar-primary hover:bg-fikar-light">
-                  <PlusCircle className="h-4 w-4 mr-2" /> Add New Doctor
-                </Button>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {doctors.map((doctor) => (
-                  <Card key={doctor.id} className="overflow-hidden">
-                    <CardContent className="p-0">
-                      <div className="flex">
-                        <div className="w-1/3 bg-fikar-light p-4 flex flex-col justify-center items-center">
-                          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white">
-                            <img 
-                              src={doctor.image} 
-                              alt={doctor.name} 
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = 'https://via.placeholder.com/150?text=' + doctor.name.charAt(3);
-                              }}
-                            />
-                          </div>
-                          <Badge 
-                            className={`mt-2 ${
-                              doctor.status === 'available' 
-                                ? 'bg-green-100 text-green-800' 
-                                : doctor.status === 'busy'
-                                ? 'bg-amber-100 text-amber-800'
-                                : 'bg-red-100 text-red-800'
-                            } border-0`}
-                          >
-                            {doctor.status === 'available' 
-                              ? 'Available' 
-                              : doctor.status === 'busy'
-                              ? `Busy (Queue: ${doctor.currentQueue})`
-                              : 'Offline'}
-                          </Badge>
-                        </div>
-                        <div className="w-2/3 p-4">
-                          <h3 className="text-lg font-semibold text-fikar-dark">{doctor.name}</h3>
-                          <p className="text-sm text-gray-600">{doctor.specialty}</p>
-                          
-                          <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-                            <div>
-                              <span className="text-gray-500">Today:</span>
-                              <span className="font-medium text-fikar-dark ml-1">{doctor.appointmentsToday} appts</span>
-                            </div>
-                            <div>
-                              <span className="text-gray-500">Next available:</span>
-                              <span className="font-medium text-fikar-dark ml-1">{doctor.nextAvailable}</span>
-                            </div>
-                          </div>
-                          
-                          <div className="mt-4 flex space-x-2">
-                            <Button size="sm" variant="outline" className="text-fikar-primary border-fikar-primary hover:bg-fikar-light">
-                              View Schedule
-                            </Button>
-                            <Button size="sm" variant="outline" className="text-gray-600 border-gray-300 hover:bg-gray-100">
-                              Edit
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="appointments">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-medium text-fikar-dark">Today's Appointments</h2>
-                  <Button variant="outline" className="border-fikar-primary text-fikar-primary hover:bg-fikar-light">
-                    <Calendar className="h-4 w-4 mr-2" /> View Calendar
-                  </Button>
-                </div>
-                
-                <div className="bg-white rounded-lg shadow overflow-hidden">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Patient
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Doctor
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Time
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {todaysAppointments.map((appointment) => (
-                        <tr key={appointment.id}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">{appointment.patientName}</div>
-                            <div className="text-sm text-gray-500">{appointment.phone}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">{appointment.doctorName}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">{appointment.time}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <Badge 
-                              className={`
-                                ${appointment.status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                  appointment.status === 'in-progress' ? 'bg-blue-100 text-blue-800' : 
-                                  appointment.status === 'waiting' ? 'bg-amber-100 text-amber-800' :
-                                  'bg-gray-100 text-gray-800'} 
-                                border-0
-                              `}
-                            >
-                              {appointment.status === 'completed' ? 'Completed' : 
-                               appointment.status === 'in-progress' ? 'In Progress' : 
-                               appointment.status === 'waiting' ? 'Waiting' : 'Confirmed'}
-                            </Badge>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <Button variant="link" className="text-fikar-primary">
-                              Details
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
+
+        <div className="flex space-x-2">
+          <Button className="flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
+            <UserPlus size={16} /> Add Doctor
+          </Button>
+          <Button variant="outline" className="flex items-center gap-2">
+            <BarChart2 size={16} /> Reports
+          </Button>
         </div>
       </div>
+
+      {/* Doctor List */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">Doctor Status</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filteredDoctors.map((doc, index) => (
+            <Card
+              key={index}
+              className={`flex items-center justify-between p-4 ${
+                doc.status === 'available' ? 'border-l-4 border-green-500' : 'border-l-4 border-yellow-500'
+              }`}
+            >
+              <div className="flex items-center space-x-4">
+                <img
+                  src={doc.img}
+                  alt={doc.name}
+                  className="w-14 h-14 rounded-full border"
+                />
+                <div>
+                  <p className="font-semibold">{doc.name}</p>
+                  <p className="text-sm text-gray-500">{doc.specialty}</p>
+                  <p className="text-sm text-gray-600">
+                    Today: <strong>{doc.todayAppts}</strong> appts | Next: {doc.available}
+                  </p>
+                </div>
+              </div>
+              <div className="flex space-x-2">
+                <Button size="sm" variant="default" onClick={() => { setSelectedDoctor(doc); setIsScheduleOpen(true); }}>
+                  View Schedule
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => { setEditDoctorIndex(index); setNewDoctor(doc); setIsEditModalOpen(true); }}>
+                  Edit
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Add Doctor Modal */}
+      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
+  <div className="fixed inset-0 bg-black/20" aria-hidden="true" />
+  <div className="fixed inset-0 flex items-center justify-center p-4">
+    <Dialog.Panel className="w-full max-w-xl space-y-4 rounded-lg bg-white p-6 shadow-xl overflow-y-auto max-h-[90vh]">
+      <div className="flex justify-between items-center mb-2">
+        <Dialog.Title className="text-lg font-semibold">Add New Doctor</Dialog.Title>
+        <button onClick={() => setIsModalOpen(false)}><X size={20} /></button>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input type="text" placeholder="Doctor Name" value={newDoctor.name} onChange={(e) => setNewDoctor({ ...newDoctor, name: e.target.value })} className="border p-2 rounded-md text-sm" />
+        <input type="text" placeholder="Specialty" value={newDoctor.specialty} onChange={(e) => setNewDoctor({ ...newDoctor, specialty: e.target.value })} className="border p-2 rounded-md text-sm" />
+        <input type="number" placeholder="Experience (years)" value={newDoctor.experience || ''} onChange={(e) => setNewDoctor({ ...newDoctor, experience: e.target.value })} className="border p-2 rounded-md text-sm" />
+        <input type="number" step="0.1" placeholder="Rating (out of 5)" value={newDoctor.rating || ''} onChange={(e) => setNewDoctor({ ...newDoctor, rating: e.target.value })} className="border p-2 rounded-md text-sm" />
+        <input type="number" placeholder="Fees (₹)" value={newDoctor.fees || ''} onChange={(e) => setNewDoctor({ ...newDoctor, fees: e.target.value })} className="border p-2 rounded-md text-sm" />
+        <input type="tel" placeholder="Contact Number" value={newDoctor.contact || ''} onChange={(e) => setNewDoctor({ ...newDoctor, contact: e.target.value })} className="border p-2 rounded-md text-sm" />
+        <select value={newDoctor.clinic || ''} onChange={(e) => setNewDoctor({ ...newDoctor, clinic: e.target.value })} className="border p-2 rounded-md text-sm">
+          <option value="">Select Clinic</option>
+          <option value="Clinic A">Clinic A</option>
+          <option value="Clinic B">Clinic B</option>
+          <option value="Clinic C">Clinic C</option>
+        </select>
+        <input type="text" placeholder="Image URL" value={newDoctor.img} onChange={(e) => setNewDoctor({ ...newDoctor, img: e.target.value })} className="border p-2 rounded-md text-sm" />
+        <input type="number" placeholder="Today's Appointments" value={newDoctor.todayAppts || ''} onChange={(e) => setNewDoctor({ ...newDoctor, todayAppts: parseInt(e.target.value || '0') })} className="border p-2 rounded-md text-sm" />
+      </div>
+
+      {/* Days */}
+      <div>
+        <label className="text-sm font-semibold">Available Days:</label>
+        <div className="flex flex-wrap gap-2 mt-1">
+          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+            <label key={day} className="text-sm flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={newDoctor.days?.includes(day) || false}
+                onChange={() => {
+                  const days = newDoctor.days || [];
+                  setNewDoctor({
+                    ...newDoctor,
+                    days: days.includes(day) ? days.filter(d => d !== day) : [...days, day]
+                  });
+                }}
+              />
+              {day}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Time Slots */}
+      <div>
+        <label className="text-sm font-semibold">Time Slots:</label>
+        <div className="space-y-2 mt-2">
+          {(newDoctor.timeSlots || ['']).map((slot, idx) => (
+            <div key={idx} className="flex gap-2 items-center">
+              <input
+                type="text"
+                value={slot}
+                placeholder="e.g., 10:00 AM - 12:00 PM"
+                onChange={(e) => {
+                  const updatedSlots = [...(newDoctor.timeSlots || [])];
+                  updatedSlots[idx] = e.target.value;
+                  setNewDoctor({ ...newDoctor, timeSlots: updatedSlots });
+                }}
+                className="border p-2 rounded-md text-sm w-full"
+              />
+              <Button variant="outline" size="icon" onClick={() => {
+                const updatedSlots = (newDoctor.timeSlots || []).filter((_, i) => i !== idx);
+                setNewDoctor({ ...newDoctor, timeSlots: updatedSlots });
+              }}>
+                <X size={16} />
+              </Button>
+            </div>
+          ))}
+          <Button
+            variant="ghost"
+            onClick={() => setNewDoctor({
+              ...newDoctor,
+              timeSlots: [...(newDoctor.timeSlots || []), '']
+            })}
+            className="text-blue-600 hover:underline text-sm"
+          >
+            + Add Slot
+          </Button>
+        </div>
+      </div>
+
+      <Button onClick={handleAddDoctor} className="w-full mt-4">Add Doctor</Button>
+    </Dialog.Panel>
+  </div>
+</Dialog>
+   {/* View Schedule Modal */}
+      <Dialog open={isScheduleOpen} onClose={() => setIsScheduleOpen(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/20" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md space-y-4 rounded-lg bg-white p-6 shadow-xl">
+            <div className="flex justify-between items-center mb-2">
+              <Dialog.Title className="text-lg font-semibold">Doctor Schedule</Dialog.Title>
+              <button onClick={() => setIsScheduleOpen(false)}><X size={20} /></button>
+            </div>
+            {selectedDoctor && (
+              <div className="space-y-2">
+                <p><strong>Name:</strong> {selectedDoctor.name}</p>
+                <p><strong>Specialty:</strong> {selectedDoctor.specialty}</p>
+                <p><strong>Next Available:</strong> {selectedDoctor.available}</p>
+                <p><strong>Today’s Appointments:</strong> {selectedDoctor.todayAppts}</p>
+              </div>
+            )}
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+
+      {/* Edit Doctor Modal */}
+      <Dialog open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/20" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md space-y-4 rounded-lg bg-white p-6 shadow-xl">
+            <div className="flex justify-between items-center mb-2">
+              <Dialog.Title className="text-lg font-semibold">Edit Doctor</Dialog.Title>
+              <button onClick={() => setIsEditModalOpen(false)}><X size={20} /></button>
+            </div>
+            <input type="text" placeholder="Doctor Name" value={newDoctor.name} onChange={(e) => setNewDoctor({ ...newDoctor, name: e.target.value })} className="w-full border p-2 rounded-md text-sm" />
+            <input type="text" placeholder="Specialty" value={newDoctor.specialty} onChange={(e) => setNewDoctor({ ...newDoctor, specialty: e.target.value })} className="w-full border p-2 rounded-md text-sm" />
+            <input type="text" placeholder="Available Time" value={newDoctor.available} onChange={(e) => setNewDoctor({ ...newDoctor, available: e.target.value })} className="w-full border p-2 rounded-md text-sm" />
+            <input type="text" placeholder="Image URL" value={newDoctor.img} onChange={(e) => setNewDoctor({ ...newDoctor, img: e.target.value })} className="w-full border p-2 rounded-md text-sm" />
+            <Button onClick={handleEditDoctor} className="w-full">Save Changes</Button>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
     </div>
   );
 };
