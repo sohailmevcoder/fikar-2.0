@@ -217,11 +217,11 @@ const Index = () => {
     </li>
     <li>
       <a
-        href="/admin-login"
+        href="/clinic-admin-login"
         className="text-gray-600 hover:text-fikar-primary transition-colors font-medium flex items-center group"
       >
         <span className="w-1.5 h-1.5 rounded-full bg-fikar-primary/50 mr-2 group-hover:scale-125 transition-transform"></span>
-        Clinic Admin
+        Admin Portal
       </a>
     </li>
     <li>
