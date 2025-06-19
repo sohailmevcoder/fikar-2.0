@@ -25,15 +25,15 @@ const Hero = () => {
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Button asChild size="lg" className="bg-fikar-primary hover:bg-red-700 text-white font-semibold group transform transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 relative overflow-hidden border border-gray-100 hover:border-fikar-primary">
-                <Link to="/user-dashboard" className="flex items-center">
+                <Link to="/patient-login" className="flex items-center">
                   <span className="relative z-10">Check Doctor Availability</span>
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-3 duration-300" />
                   <span className="absolute inset-0 bg-gradient-to-r from-fikar-primary to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                 </Link>
               </Button>
             </div>
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div className="flex items-start hover-lift">
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-7">
+              <div className="flex items-start hover-lift transition-all duration-300 hover:shadow-md p-4 rounded-xl">
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-fikar-primary bg-opacity-10 relative">
                   <Clock className="h-6 w-6 text-fikar-primary" />
                   <div className="absolute inset-0 rounded-md bg-fikar-primary/20 animate-ripple"></div>
@@ -43,7 +43,7 @@ const Hero = () => {
                   <p className="mt-2 text-sm text-gray-500">Live doctor availability status</p>
                 </div>
               </div>
-              <div className="flex items-start hover-lift">
+              <div className="flex items-start hover-lift transition-all duration-300 hover:shadow-md p-4 rounded-xl">
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-fikar-primary bg-opacity-10 relative">
                   <Calendar className="h-6 w-6 text-fikar-primary" />
                   <div className="absolute inset-0 rounded-md bg-fikar-primary/20 animate-ripple" style={{ animationDelay: '0.3s' }}></div>
@@ -53,7 +53,7 @@ const Hero = () => {
                   <p className="mt-2 text-sm text-gray-500">Know your position in line</p>
                 </div>
               </div>
-              <div className="flex items-start hover-lift">
+              <div className="flex items-start hover-lift transition-all duration-300 hover:shadow-md p-4 rounded-xl">
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-fikar-primary bg-opacity-10 relative">
                   <UserCheck className="h-6 w-6 text-fikar-primary" />
                   <div className="absolute inset-0 rounded-md bg-fikar-primary/20 animate-ripple" style={{ animationDelay: '0.6s' }}></div>

@@ -98,7 +98,7 @@ const Index = () => {
             </p>
             <div className="mt-8 flex justify-center">
               <Button asChild size="lg" className="bg-white text-fikar-primary hover:bg-gray-100 group">
-                <Link to="/user-dashboard" className="flex items-center">
+                <Link to="/patient-login" className="flex items-center">
                   Get Started Now <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>

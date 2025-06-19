@@ -54,22 +54,22 @@ const Navbar = () => {
                   <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" />
                 </button>
                 <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100">
-                  <Link to="/user-dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
+                  <Link to="/patient-login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
                     <User className="inline-block mr-2 h-4 w-4" />
                     Patient Login
                   </Link>
-                  <Link to="/doctor-dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
+                  <Link to="/doctor-login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
                     <User className="inline-block mr-2 h-4 w-4" />
                     Doctor Login
                   </Link>
-                  <Link to="/admin-dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
+                  <Link to="/clinic-admin-login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
                     <User className="inline-block mr-2 h-4 w-4" />
-                    Clinic Admin
+                    Admin Login
                   </Link>
                 </div>
               </div>
               <Button asChild variant="gradient" className="shadow-md hover:shadow-lg">
-                <Link to="/user-dashboard" className="flex items-center">
+                <Link to="/patient-login" className="flex items-center">
                   <Phone className="mr-1 h-4 w-4" /> Get Started
                 </Link>
               </Button>
@@ -119,22 +119,22 @@ const Navbar = () => {
             How It Works
           </Link>
           <Link
-            to="/user-dashboard"
+            to="/patient-login"
             className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${location.pathname === '/user-dashboard' ? 'text-fikar-primary bg-fikar-light/50' : 'text-gray-600 hover:text-fikar-primary hover:bg-gray-50'}`}
           >
             Patient Login
           </Link>
           <Link
-            to="/doctor-dashboard"
+            to="/doctor-login"
             className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${location.pathname === '/doctor-dashboard' ? 'text-fikar-primary bg-fikar-light/50' : 'text-gray-600 hover:text-fikar-primary hover:bg-gray-50'}`}
           >
             Doctor Login
           </Link>
           <Link
-            to="/admin-dashboard"
+            to="/clinic-admin-login"
             className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${location.pathname === '/admin-dashboard' ? 'text-fikar-primary bg-fikar-light/50' : 'text-gray-600 hover:text-fikar-primary hover:bg-gray-50'}`}
           >
-            Clinic Admin
+            Admin Login
           </Link>
           <div className="pt-2">
             <Button asChild variant="gradient" className="w-full">
