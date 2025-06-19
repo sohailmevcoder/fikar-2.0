@@ -217,7 +217,7 @@ export default function PatientLogin() {
               ) : (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Verification Code</label>
+                    <label className="block text-sm font-medium text-gray-700">OTP Code</label>
                     <input
                       type="text"
                       value={otp}
