@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, Phone, User } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Navbar = () => {
@@ -39,15 +40,7 @@ const Navbar = () => {
           
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-4">
-              <Link to="/" className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === '/' ? 'text-fikar-primary' : 'text-gray-600 hover:text-fikar-primary'}`}>
-                Home
-              </Link>
-              <Link to="#features" className="text-gray-600 hover:text-fikar-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                Features
-              </Link>
-              <Link to="#how-it-works" className="text-gray-600 hover:text-fikar-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                How It Works
-              </Link>
+              
               <div className="relative group">
                 <button className="text-gray-600 hover:text-fikar-primary px-3 py-2 rounded-md text-sm font-medium flex items-center transition-colors">
                   Login
@@ -64,13 +57,13 @@ const Navbar = () => {
                   </Link>
                   <Link to="/admin-dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
                     <User className="inline-block mr-2 h-4 w-4" />
-                    Clinic Admin
+                    Admin Login
                   </Link>
                 </div>
               </div>
               <Button asChild variant="gradient" className="shadow-md hover:shadow-lg">
                 <Link to="/user-dashboard" className="flex items-center">
-                  <Phone className="mr-1 h-4 w-4" /> Get Started
+                  <Calendar className="mr-1 h-4 w-4" /> Book Appointment
                 </Link>
               </Button>
             </div>
@@ -134,14 +127,14 @@ const Navbar = () => {
             to="/admin-dashboard"
             className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${location.pathname === '/admin-dashboard' ? 'text-fikar-primary bg-fikar-light/50' : 'text-gray-600 hover:text-fikar-primary hover:bg-gray-50'}`}
           >
-            Clinic Admin
+            Admin Login
           </Link>
           <div className="pt-2">
             <Button asChild variant="gradient" className="w-full">
-              <Link to="/user-dashboard" className="flex items-center justify-center">
-                <Phone className="mr-1 h-4 w-4" /> Get Started
-              </Link>
-            </Button>
+            <Link to="/user-dashboard" className="flex items-center justify-center">
+                   <Calendar className="mr-1 h-4 w-4" /> Book Appointment
+                    </Link>
+                      </Button>
           </div>
         </div>
       </div>
