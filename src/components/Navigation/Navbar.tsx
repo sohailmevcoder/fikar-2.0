@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, Phone, User } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Navbar = () => {
@@ -33,44 +34,36 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <img src="/fikar-logo.svg" alt="Fikar Logo" className="h-10 w-auto" />
+              <img src="/fikar-logo.svg" alt="Fikar Logo" className="h-20 w-auto" />
             </Link>
           </div>
           
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-4">
-              <Link to="/" className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === '/' ? 'text-fikar-primary' : 'text-gray-600 hover:text-fikar-primary'}`}>
-                Home
-              </Link>
-              <Link to="#features" className="text-gray-600 hover:text-fikar-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                Features
-              </Link>
-              <Link to="#how-it-works" className="text-gray-600 hover:text-fikar-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                How It Works
-              </Link>
+              
               <div className="relative group">
                 <button className="text-gray-600 hover:text-fikar-primary px-3 py-2 rounded-md text-sm font-medium flex items-center transition-colors">
                   Login
                   <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" />
                 </button>
                 <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100">
-                  <Link to="/user-dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
+                  <Link to="/patient-login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
                     <User className="inline-block mr-2 h-4 w-4" />
                     Patient Login
                   </Link>
-                  <Link to="/doctor-dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
+                  <Link to="/doctor-login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
                     <User className="inline-block mr-2 h-4 w-4" />
                     Doctor Login
                   </Link>
-                  <Link to="/admin-dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
+                  <Link to="/clinic-admin-login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-fikar-light hover:text-fikar-primary transition-colors">
                     <User className="inline-block mr-2 h-4 w-4" />
-                    Clinic Admin
+                    Admin Login
                   </Link>
                 </div>
               </div>
               <Button asChild variant="gradient" className="shadow-md hover:shadow-lg">
-                <Link to="/user-dashboard" className="flex items-center">
-                  <Phone className="mr-1 h-4 w-4" /> Get Started
+                <Link to="/patient-login" className="flex items-center">
+                  <Calendar className="mr-1 h-4 w-4" /> Book Appointment
                 </Link>
               </Button>
             </div>
@@ -119,29 +112,29 @@ const Navbar = () => {
             How It Works
           </Link>
           <Link
-            to="/user-dashboard"
+            to="/patient-login"
             className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${location.pathname === '/user-dashboard' ? 'text-fikar-primary bg-fikar-light/50' : 'text-gray-600 hover:text-fikar-primary hover:bg-gray-50'}`}
           >
             Patient Login
           </Link>
           <Link
-            to="/doctor-dashboard"
+            to="/doctor-login"
             className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${location.pathname === '/doctor-dashboard' ? 'text-fikar-primary bg-fikar-light/50' : 'text-gray-600 hover:text-fikar-primary hover:bg-gray-50'}`}
           >
             Doctor Login
           </Link>
           <Link
-            to="/admin-dashboard"
+            to="/clinic-admin-login"
             className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${location.pathname === '/admin-dashboard' ? 'text-fikar-primary bg-fikar-light/50' : 'text-gray-600 hover:text-fikar-primary hover:bg-gray-50'}`}
           >
-            Clinic Admin
+            Admin Login
           </Link>
           <div className="pt-2">
             <Button asChild variant="gradient" className="w-full">
-              <Link to="/user-dashboard" className="flex items-center justify-center">
-                <Phone className="mr-1 h-4 w-4" /> Get Started
-              </Link>
-            </Button>
+            <Link to="/user-dashboard" className="flex items-center justify-center">
+                   <Calendar className="mr-1 h-4 w-4" /> Book Appointment
+                    </Link>
+                      </Button>
           </div>
         </div>
       </div>
