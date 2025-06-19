@@ -64,7 +64,7 @@ export default function ClinicAdminLogin() {
     return (
         // Admin Login
         <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-md">
-            <h3 className="text-center text-lg font-semibold text-slate-700 mb-4">Clinic Admin Access</h3>
+            <h3 className="text-center text-lg font-semibold text-slate-700 mb-4">Admin Access</h3>
             <p className="text-sm text-center text-gray-500 mb-6">Choose how you want to access your account</p>
 
                 <div className="flex border rounded-xl overflow-hidden mb-6">
