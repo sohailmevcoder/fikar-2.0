@@ -63,10 +63,10 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				fikar: {
-					primary: '#0000FF', // Red color from the Fikar+ logo
+					primary: '#0000FF', // Blue color from the Fikar+ logo
 					secondary: '#0C4A6E', // Dark blue for contrast
 					accent: '#FF3333', // Lighter red for accents
-					light: '#FFEEEE', // Light red background
+					light: '#ADD8E6', // Light blue background
 					dark: '#0C4A6E', // Dark blue for text
 					success: '#10B981', // Green for availability
 					warning: '#F59E0B', // Orange for busy/waiting

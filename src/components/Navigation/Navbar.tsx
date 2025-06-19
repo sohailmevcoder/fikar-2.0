@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, Phone, User } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Navbar = () => {
@@ -33,21 +34,13 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <img src="/fikar-logo.svg" alt="Fikar Logo" className="h-10 w-auto" />
+              <img src="/fikar-logo.svg" alt="Fikar Logo" className="h-20 w-auto" />
             </Link>
           </div>
           
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-4">
-              <Link to="/" className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === '/' ? 'text-fikar-primary' : 'text-gray-600 hover:text-fikar-primary'}`}>
-                Home
-              </Link>
-              <Link to="#features" className="text-gray-600 hover:text-fikar-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                Features
-              </Link>
-              <Link to="#how-it-works" className="text-gray-600 hover:text-fikar-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                How It Works
-              </Link>
+              
               <div className="relative group">
                 <button className="text-gray-600 hover:text-fikar-primary px-3 py-2 rounded-md text-sm font-medium flex items-center transition-colors">
                   Login
@@ -69,7 +62,7 @@ const Navbar = () => {
                 </div>
               </div>
               <Button asChild variant="gradient" className="shadow-md hover:shadow-lg">
-                <Link to="/patient-login" className="flex items-center">
+                <Link to="/user-dashboard" className="flex items-center">
                   <Phone className="mr-1 h-4 w-4" /> Get Started
                 </Link>
               </Button>
@@ -138,10 +131,10 @@ const Navbar = () => {
           </Link>
           <div className="pt-2">
             <Button asChild variant="gradient" className="w-full">
-              <Link to="/user-dashboard" className="flex items-center justify-center">
-                <Phone className="mr-1 h-4 w-4" /> Get Started
-              </Link>
-            </Button>
+            <Link to="/user-dashboard" className="flex items-center justify-center">
+                   <Calendar className="mr-1 h-4 w-4" /> Book Appointment
+                    </Link>
+                      </Button>
           </div>
         </div>
       </div>

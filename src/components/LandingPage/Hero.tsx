@@ -16,13 +16,27 @@ const Hero = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="animate-fade-in">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-fikar-dark leading-tight">
-              Instant Access to Healthcare –    No Lines, No Delays
-            </h1>
-            <p className="mt-6 text-lg text-gray-600 max-w-2xl">
-              Fikar Plus shows real-time doctor availability and live queue updates, 
-              helping you save time spent waiting in clinics and reducing crowding in hospitals.
-            </p>
+            <div className="inline-block px-4 py-1 rounded-full bg-blue-100 text-fikar-primary font-medium text-sm tracking-wide mb-6">
+  #1 Doctor Queue Management App in India
+</div>
+
+<h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-fikar-dark leading-tight mb-6">
+  <span className="inline-block">Instant Access to</span>{" "}
+  <span className="inline-block">Healthcare – </span>{" "}
+  <span className="inline-block relative">
+   No Lines, No Delays
+    
+  </span>{" "}
+  
+</h1>
+
+
+<p className="text-xl text-gray-600 max-w-2xl leading-relaxed">
+  Fikar Plus shows <span className="font-semibold text-fikar-primary">real-time doctor availability</span> and{" "}
+  <span className="font-semibold text-fikar-primary">live queue updates</span>, helping you save time spent
+  waiting in clinics and reducing crowding in hospitals.
+</p>
+
             <div className="mt-8 flex flex-wrap gap-4">
               <Button asChild size="lg" className="bg-fikar-primary hover:bg-red-700 text-white font-semibold group transform transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 relative overflow-hidden border border-gray-100 hover:border-fikar-primary">
                 <Link to="/patient-login" className="flex items-center">
