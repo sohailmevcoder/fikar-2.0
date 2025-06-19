@@ -62,8 +62,8 @@ const Navbar = () => {
                 </div>
               </div>
               <Button asChild variant="gradient" className="shadow-md hover:shadow-lg">
-                <Link to="/user-dashboard" className="flex items-center">
-                  <Phone className="mr-1 h-4 w-4" /> Get Started
+                <Link to="/patient-login" className="flex items-center">
+                  <Calendar className="mr-1 h-4 w-4" /> Book Appointment
                 </Link>
               </Button>
             </div>
