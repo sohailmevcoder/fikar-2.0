@@ -33,7 +33,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <img src="/fikar-logo.svg" alt="Fikar Logo" className="h-10 w-auto" />
+              <img src="/fikar-logo.svg" alt="Fikar Logo" className="h-20 w-auto" />
             </Link>
           </div>
           

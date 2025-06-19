@@ -42,11 +42,26 @@ const Features = () => {
       <div className="absolute bottom-0 right-0 w-80 h-80 bg-fikar-accent/5 rounded-full blur-3xl"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="lg:text-center">
-          <h2 className="text-base text-fikar-primary font-semibold tracking-wide uppercase">Features</h2>
-          <p className="mt-2 section-heading mx-auto">
-            Everything You Need for Hassle-free Doctor Visits
-          </p>
+       <div className="w-full flex justify-center">
+  <div className="inline-flex items-center bg-fikar-primary/10 rounded-full px-4 py-1.5 mb-4">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-badge-check h-5 w-5 text-fikar-primary mr-2">
+      <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path>
+      <path d="m9 12 2 2 4-4"></path>
+    </svg>
+    <span className="text-sm font-semibold text-fikar-primary">Premium Features</span>
+  </div>
+</div>
+
+
+         <h2 className="text-4xl md:text-5xl font-bold text-fikar-dark mb-6 text-center">
+  <span className="relative inline-block">
+    Everything
+    <span className="absolute -bottom-2 left-0 right-0 h-3 bg-fikar-primary/20 -z-10"></span>
+  </span>
+  <span> You Need for </span>
+  <span className="text-fikar-primary">Hassle-free</span> Doctor Visits
+</h2>
+
           <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
             Fikar Plus provides a comprehensive solution to make healthcare more accessible and efficient.
           </p>
@@ -114,7 +129,7 @@ const Features = () => {
           </div>
         </div>
       </div>
-    </div>
+    
   );
 };
 
