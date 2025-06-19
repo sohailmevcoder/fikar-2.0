@@ -21,7 +21,7 @@ import DoctorLogin from "./pages/DoctorLogin";
 import DoctorSignup from "./pages/DoctorSignup"
 import DoctorDashboard from "./pages/DoctorDashboard";
 
-import ClinicAdminSignup from "./pages/PatientSignup";
+import ClinicAdminSignup from "./pages/AdminSignup";
 import ClinicAdminLogin from "./pages/clinicAdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
