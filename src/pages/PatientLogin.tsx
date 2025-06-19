@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import 'tailwindcss/tailwind.css'; // Ensure Tailwind CSS is imported
+import 'tailwindcss/tailwind.css';
 
-export default function ClinicAdminLogin() {
-    const [activeTab, setActiveTab] = useState('password');
+export default function PatientLogin() {
+    const [activeTab, setActiveTab] = useState<'password' | 'otp'>('password');
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [otp, setOtp] = useState('');
@@ -12,89 +12,115 @@ export default function ClinicAdminLogin() {
     const [passwordError, setPasswordError] = useState('');
     const navigate = useNavigate();
 
-
-    // Validate email or phone
     const isValidEmail = (value: string) =>
-        /^[^\s@]+@gmail\.com$/.test(value); // Only allow @gmail.com
+        /^[^\s@]+@gmail\.com$/.test(value);
 
     const isValidPhone = (value: string) =>
         /^[0-9]{10}$/.test(value);
 
-    // Allow only 10 digits for phone input, no special chars except '@' for email
     const handleIdentifierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let val = e.target.value;
-        // If input looks like a phone (all digits, no '@'), restrict to 10 digits
-        if (!val.includes('@')) {
-            val = val.replace(/[^0-9]/g, '').slice(0, 10);
+
+        if (activeTab === 'password') {
+            val = val.replace(/\s/g, ''); // remove spaces for email
         } else {
-            // For email, allow all chars but not spaces
-            val = val.replace(/\s/g, '');
+            val = val.replace(/[^0-9]/g, '').slice(0, 10); // restrict to 10 digits
         }
+
         setIdentifier(val);
         setIdentifierError('');
         setPasswordError('');
+        setError('');
     };
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
         setIdentifierError('');
         setPasswordError('');
-        if (!isValidEmail(identifier) && !isValidPhone(identifier)) {
-            setIdentifierError('Please enter a valid @gmail.com email or 10-digit phone number.');
-            return;
-        }
+        setError('');
+
         if (activeTab === 'password') {
+            if (!isValidEmail(identifier)) {
+                setIdentifierError('Please enter a valid @gmail.com email.');
+                return;
+            }
+
             if (password === '12345') {
                 navigate('/user-dashboard');
             } else {
-                setPasswordError('Wrong password');
+                setPasswordError('Incorrect password.');
             }
-        } else if (activeTab === 'otp') {
-            // For OTP, you can add your OTP validation logic here
-            if (otp === '123456') {   
+        } else {
+            if (!isValidPhone(identifier)) {
+                setIdentifierError('Please enter a valid 10-digit phone number.');
+                return;
+            }
+
+            if (otp === '123456') {
                 navigate('/user-dashboard');
             } else {
-                setPasswordError('');
-                setError('Invalid OTP');
+                setError('Invalid OTP.');
             }
-            
-        }   
+        }
     };
 
     return (
-        <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-md">
-            <h3 className="text-center text-lg font-semibold text-slate-700 mb-4">Patient Access</h3>
-            <p className="text-sm text-center text-gray-500 mb-6">Choose how you want to access your account</p>
+        <div className="min-h-screen bg-[#f9fafb] flex items-center justify-center px-4">
+            <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-md">
+                <div className="flex justify-center mb-4">
+                    <img src="/fikar-logo.svg" alt="Fikar Plus Logo" className="h-20" />
+                </div>
+
+                <h3 className="text-center text-lg font-semibold text-slate-700 mb-2">Patient Access</h3>
+                <p className="text-sm text-center text-gray-500 mb-6">Choose how you want to access your account</p>
 
                 <div className="flex border rounded-xl overflow-hidden mb-6">
                     <button
-                        onClick={() => { setActiveTab('password'); setIdentifierError(''); setPasswordError(''); }}
+                        type="button"
+                        onClick={() => {
+                            setActiveTab('password');
+                            setIdentifier('');
+                            setPassword('');
+                            setOtp('');
+                            setIdentifierError('');
+                            setPasswordError('');
+                            setError('');
+                        }}
                         className={`flex-1 py-2 text-sm font-medium ${activeTab === 'password' ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-600'}`}
                     >
-                        Password
+                        Email Login
                     </button>
                     <button
-                        onClick={() => { setActiveTab('otp'); setIdentifierError(''); setPasswordError(''); }}
+                        type="button"
+                        onClick={() => {
+                            setActiveTab('otp');
+                            setIdentifier('');
+                            setPassword('');
+                            setOtp('');
+                            setIdentifierError('');
+                            setPasswordError('');
+                            setError('');
+                        }}
                         className={`flex-1 py-2 text-sm font-medium ${activeTab === 'otp' ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-600'}`}
                     >
                         OTP Login
                     </button>
                 </div>
 
-                <form className="space-y-4" onSubmit={handleLogin}>
+                <form onSubmit={handleLogin} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Email or Phone Number</label>
+                        <label className="block text-sm font-medium text-gray-700">
+                            {activeTab === 'password' ? 'Email Address' : 'Phone Number'}
+                        </label>
                         <input
                             type="text"
                             value={identifier}
                             onChange={handleIdentifierChange}
-                            placeholder="Enter email or phone"
+                            placeholder={activeTab === 'password' ? 'Enter your @gmail.com email' : 'Enter 10-digit phone number'}
                             required
                             className={`mt-1 w-full px-4 py-2 border ${identifierError ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring focus:ring-blue-200`}
                         />
-                        {identifierError && (
-                            <p className="text-red-500 text-xs mt-1">{identifierError}</p>
-                        )}
+                        {identifierError && <p className="text-red-500 text-xs mt-1">{identifierError}</p>}
                     </div>
 
                     {activeTab === 'password' && (
@@ -108,9 +134,7 @@ export default function ClinicAdminLogin() {
                                 required
                                 className={`mt-1 w-full px-4 py-2 border ${passwordError ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring focus:ring-blue-200`}
                             />
-                            {passwordError && (
-                                <p className="text-red-500 text-xs mt-1">{passwordError}</p>
-                            )}
+                            {passwordError && <p className="text-red-500 text-xs mt-1">{passwordError}</p>}
                             <div className="text-right mt-1">
                                 <a href="#" className="text-sm text-blue-600">Forgot Password?</a>
                             </div>
@@ -124,28 +148,35 @@ export default function ClinicAdminLogin() {
                                 type="text"
                                 value={otp}
                                 onChange={(e) => setOtp(e.target.value)}
-                                placeholder="Enter OTP"
+                                placeholder="Enter OTP (123456)"
                                 required
                                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
                             />
+                            {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
                         </div>
                     )}
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-700 text-white py-2 rounded-md hover:bg-blue-800"
+                        className="w-full bg-blue-700 text-white py-2 rounded-md hover:bg-blue-800 transition"
                     >
                         Sign In
                     </button>
                 </form>
 
                 <div className="text-center mt-4 text-sm text-gray-600">
-                    Don't have an account? <a href="patient-signup" className="text-blue-600 font-medium">Create Account</a>
+                    Don&apos;t have an account?{' '}
+                    <a href="/patient-signup" className="text-blue-600 font-medium">Create Account</a>
                 </div>
 
                 <div className="text-center text-xs text-gray-500 mt-6">
                     Need help? Contact <a href="mailto:support@fikarplus.com" className="text-blue-600">support@fikarplus.com</a>
                 </div>
+
+                <div className="text-center text-[11px] text-gray-400 mt-4">
+                    © 2025 Fikar Plus. All rights reserved.
+                </div>
             </div>
+        </div>
     );
 }
