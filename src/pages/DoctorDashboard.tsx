@@ -151,11 +151,19 @@ const DoctorDashboard = () => {
             <div className="flex items-center space-x-5">
               <div className="relative">
                 {/* notification bell */}
-                <button className='text-gray-500 hover:text-fikar-primary relative transition-all duration-300 hover:rotate-[5deg]'>
-                  <Bell className="h-6 w-6 mt-1" />
+                <a
+                  className="h-6 w-6 mt-1 relative group transition-all duration-300"
+                  href="/notification"
+                >
+                  {/* Shadow on hover/click */}
+                  <span className="absolute inset-0 rounded-full pointer-events-none transition-all duration-300 group-hover:shadow-[0_0_16px_4px_rgba(0,0,0,0.18)] group-active:shadow-[0_0_20px_6px_rgba(0,0,0,0.22)] group-hover:ring-2 group-hover:ring-yellow-500"></span>
+                  <span className="absolute inset-1 rounded-full transition-all duration-300 group-hover:bg-yellow-100"></span>
+                  <Bell className="h-6 w-6 relative z-10 transition-all duration-300 group-hover:text-yellow-700 group-hover:rotate-[5deg]" />
                   {/* Notification count */}
-                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-semibold">3</span>
-                </button>
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-semibold z-20">
+                    3
+                  </span>
+                </a>
               </div>
               {/* nav User profile */}
               <div className="relative">

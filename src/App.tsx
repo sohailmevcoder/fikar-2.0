@@ -27,6 +27,7 @@ import ClinicAdminLogin from "./pages/clinicAdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import HospitalProfile from "./pages/HospitalProfile";
+import NotificationPage from "./components/Notification/Notification";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,8 @@ const App = () => (
           <Route path="/admin-signup" element={<ClinicAdminSignup />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/hospital-profile" element={<HospitalProfile />} />
+
+          <Route path = "notification" element = {<NotificationPage />} />
 
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
