@@ -17,7 +17,7 @@ import PatientLogin from "./pages/PatientLogin";
 import PatientSignp from "./pages/PatientSignup"
 import UserDashboard from "./pages/UserDashboard";
 
-import DocSetting from "./lib/docSetting"
+import DocSetting from "./components/Settings/docSetting"
 import DoctorLogin from "./pages/DoctorLogin";
 import DoctorSignup from "./pages/DoctorSignup"
 import DoctorDashboard from "./pages/DoctorDashboard";
