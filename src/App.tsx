@@ -25,7 +25,7 @@ import ClinicAdminSignup from "./pages/AdminSignup";
 import ClinicAdminLogin from "./pages/clinicAdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
-
+import HospitalProfile from "./pages/HospitalProfile";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +49,9 @@ const App = () => (
           <Route path="/clinic-admin-login" element={<ClinicAdminLogin />} />
           <Route path="/admin-signup" element={<ClinicAdminSignup />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/hospital-profile" element={<HospitalProfile />} />
+
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

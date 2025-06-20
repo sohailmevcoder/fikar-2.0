@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Users, Calendar, Clock3, UserPlus, BarChart2, Search, X } from 'lucide-react';
 import { Dialog } from '@headlessui/react';
+import { Menu } from '@headlessui/react';
+import { ChevronDown } from 'lucide-react';
+import HospitalProfile from './pages/HospitalProfile';
 
 const defaultDoctors = [
   {
@@ -40,6 +44,7 @@ const defaultDoctors = [
 ];
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [doctors, setDoctors] = useState(defaultDoctors);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,9 +80,33 @@ const AdminDashboard = () => {
     setNewDoctor({ name: '', specialty: '', available: '', img: '', todayAppts: 0, status: 'available' });
     setIsEditModalOpen(false);
   };
-
+        
   return (
     <div className="p-6 space-y-6">
+           {/* Header */}
+        <header className="flex items-center justify-between p-4 border-b bg-white">
+  <div className="flex items-center gap-3">
+    <button className="text-xl font-bold">&larr;</button>
+    <h1 className="text-xl font-semibold">Clinic Admin</h1>
+  </div>
+  <div className="flex items-center gap-4">
+       <button
+  onClick={() => navigate('/hospital-profile')}
+  className="border rounded px-3 py-1 text-sm font-medium text-gray-700 bg-white hover:bg-gray-100"
+>
+  City Hospital
+   </button>
+    <div className="text-sm text-gray-500">
+      {new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })}
+    </div>
+  </div>
+</header>
+      
       {/* Dashboard Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
@@ -114,48 +143,57 @@ const AdminDashboard = () => {
         </Card>
       </div>
 
-      {/* Quick Actions */}
-      <div className="flex justify-between items-start gap-4 flex-wrap">
-        {/* Search Bar */}
-        <div className="relative w-full max-w-md">
-          <div className="flex items-center rounded-md border px-3 py-2 bg-white shadow-sm">
-            <Search className="w-4 h-4 text-gray-500 mr-2" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search doctors, patients, or appointments..."
-              className="w-full outline-none text-sm"
-            />
-          </div>
-          {query && (
-            <div className="absolute z-10 mt-1 w-full bg-white border shadow-md rounded-md max-h-60 overflow-y-auto">
-              {filteredDoctors.length > 0 ? (
-                filteredDoctors.map((doc, i) => (
-                  <div
-                    key={i}
-                    className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm"
-                    onClick={() => setQuery(doc.name)}
-                  >
-                    {doc.name} - <span className="text-gray-500">{doc.specialty}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="px-4 py-2 text-sm text-gray-500">No results found</div>
-              )}
+        {/* Quick Actions */}
+<div className="flex justify-between items-start gap-4 flex-wrap">
+  {/* Search Bar */}
+  <div className="relative w-full max-w-md flex-1">
+    <div className="flex items-center rounded-md border px-3 py-2 bg-white shadow-sm h-[40px]">
+      <Search className="w-4 h-4 text-gray-500 mr-2" />
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search doctors, patients, or appointments..."
+        className="w-full outline-none text-sm"
+      />
+    </div>
+    {query && (
+      <div className="absolute z-10 mt-1 w-full bg-white border shadow-md rounded-md max-h-60 overflow-y-auto">
+        {filteredDoctors.length > 0 ? (
+          filteredDoctors.map((doc, i) => (
+            <div
+              key={i}
+              className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm"
+              onClick={() => setQuery(doc.name)}
+            >
+              {doc.name} - <span className="text-gray-500">{doc.specialty}</span>
             </div>
-          )}
-        </div>
-
-        <div className="flex space-x-2">
-          <Button className="flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
-            <UserPlus size={16} /> Add Doctor
-          </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <BarChart2 size={16} /> Reports
-          </Button>
-        </div>
+          ))
+        ) : (
+          <div className="px-4 py-2 text-sm text-gray-500">No results found</div>
+        )}
       </div>
+    )}
+  </div>
+
+  {/* Today's Appointments Button */}
+  <div className="w-full max-w-md flex-1">
+    <div className="flex rounded-md border px-3 py-2 bg-white shadow-sm h-[40px] items-center justify-center">
+      <button className="text-sm text-gray-700 font-medium">Today's Appointments</button>
+    </div>
+  </div>
+
+  {/* Buttons */}
+  <div className="flex space-x-2">
+    <Button className="flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
+      <UserPlus size={16} /> Add Doctor
+    </Button>
+    <Button variant="outline" className="flex items-center gap-2">
+      <BarChart2 size={16} /> Reports
+    </Button>
+  </div>
+</div>
+
 
       {/* Doctor List */}
       <div className="space-y-4">
