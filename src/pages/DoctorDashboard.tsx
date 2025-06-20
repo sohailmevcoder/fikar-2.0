@@ -138,22 +138,49 @@ const DoctorDashboard = () => {
         <div className="bg-white border-b border-gray-200 px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <Link to="/" className="text-fikar-primary hover:text-fikar-secondary">
-                <ChevronLeft className="h-5 w-5" />
+              {/* Left arrow design */}
+              <Link to="/" className="text-fikar-primary hover:text-fikar-secondary transiton-all duration-300">
+              <div className ="bg-fikar-light/30 hover:bg-fikar-light p-1.5 rounded-full group-hover:translate-x-0.5 transition-all duration-300"><ChevronLeft className="h-5 w-5" /></div>
               </Link>
-              <h1 className="ml-4 text-xl font-semibold text-fikar-dark">Doctor Dashboard</h1>
+              <div className='flex-item-center ml-4'>
+                {/* <div className="h-7 w-1.5 rounded-full bg-gradient-to-b from-fikar-primary to fikar-secondard mr-3 hidden sm:block"></div> */}
+                <h1 className="ml-4 text-xl font-semibold text-fikar-dark">Doctor Dashboard</h1>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <button className="text-gray-500 hover:text-fikar-primary">
-                <Bell className="h-5 w-5" />
-              </button>
-              <Link to="/doctor-profile" className="text-fikar-primary hover:text-fikar-secondary flex items-center">
-                <User className="h-5 w-5" />
-                <span className="ml-2 hidden sm:inline">Dr. Vivek Sharma</span>
-              </Link>
-              <Link to="/doctor-settings" className="text-gray-500 hover:text-fikar-primary">
-                <Settings className="h-5 w-5" />
-              </Link>
+            {/* right side nav */}
+            <div className="flex items-center space-x-5">
+              <div className="relative">
+                {/* notification bell */}
+                <button className='text-gray-500 hover:text-fikar-primary relative transition-all duration-300 hover:rotate-[5deg]'>
+                  <Bell className="h-6 w-6 mt-1" />
+                  {/* Notification count */}
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-semibold">3</span>
+                </button>
+              </div>
+              {/* nav User profile */}
+              <div className="relative">
+                <button className="flex items-center bg-gradient-to-r from-fikar-light/30 to-gray-50 rounded-full pr-1.5 sm:pr-4 pl-1.5 py-1.5 hover:shadow-md transition-all duration-300">
+                  <div className="bg-gradient-to-r from-fikar-primary to-fikar-secondary rounded-full p-0.5 mr-0 sm:mr-2">
+                    <div className="bg-white rounded-full p-1">
+                      <User className="h-4 w-4 text-fikar-primary" />
+                    </div>
+                  </div>
+                  <span className="hidden sm:block text-sm font-medium text-gray-700">Dr. Vivek Sharma
+                  </span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-down h-4 w-4 ml-1 text-gray-500">
+                  <path d="m6 9 6 6 6-6"></path>
+                  </svg>
+                </button>
+              </div>
+              {/* Nav setting */}
+              <a
+                className="text-gray-500 hover:text-fikar-primary bg-gray-100 hover:bg-gray-200 p-1.5 rounded-full transition-all duration-300"
+                href="/doctor-settings"
+              >
+                <span className="block transition-transform duration-300 hover:rotate-45">
+                  <Settings className="h-5 w-5" />
+                </span>
+              </a>
             </div>
           </div>
         </div>
@@ -161,92 +188,118 @@ const DoctorDashboard = () => {
         {/* Status control and statistics */}
         <div className="px-4 py-6 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <Card className="col-span-1">
-              <CardHeader>
-                <CardTitle>Availability Status</CardTitle>
-                <CardDescription>Control your current availability</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col space-y-3">
-                  <Button 
-                    onClick={() => handleStatusChange('available')}
-                    className={`justify-start ${availabilityStatus === 'available' ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                  >
-                    <CheckCircle className="h-5 w-5 mr-2" />
-                    Available
-                  </Button>
-                  <Button 
-                    onClick={() => handleStatusChange('busy')}
-                    className={`justify-start ${availabilityStatus === 'busy' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                  >
-                    <PauseCircle className="h-5 w-5 mr-2" />
-                    Busy
-                  </Button>
-                  <Button 
-                    onClick={() => handleStatusChange('offline')}
-                    className={`justify-start ${availabilityStatus === 'offline' ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                  >
-                    <XCircle className="h-5 w-5 mr-2" />
-                    Offline
-                  </Button>
-                </div>
-              </CardContent>
-              <CardFooter className="text-sm text-gray-500">
-                Last updated: Just now
-              </CardFooter>
-            </Card>
-            
-            <div className="col-span-1 lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-500">Patients Today</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center">
-                    <Users className="h-6 w-6 text-fikar-primary mr-2" />
-                    <span className="text-3xl font-bold text-fikar-dark">{statistics.totalPatients}</span>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-500">Completed</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-6 w-6 text-green-500 mr-2" />
-                    <span className="text-3xl font-bold text-fikar-dark">{statistics.completedToday}</span>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-500">Waiting Now</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center">
-                    <Clock className="h-6 w-6 text-amber-500 mr-2" />
-                    <span className="text-3xl font-bold text-fikar-dark">{statistics.waitingNow}</span>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-500">Avg. Wait Time</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center">
-                    <Clock className="h-6 w-6 text-fikar-secondary mr-2" />
-                    <span className="text-3xl font-bold text-fikar-dark">{statistics.averageWaitTime}</span>
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Availability Status */}
+            <div className="bg-white rounded-xl shadow p-6 col-span-1">
+              <div className='flex flex-col space-y-1.5 p-6 pb-2'>
+                <h3 className="tracking-tight text-2xl font-semibold text-fikar-dark flex items-center">
+                  <span className='relative'>Availability Status
+                    <div className="absolute -bottom-1 left-0 h-1 w-12 bg-gradient-to-r from-fikar-primary to-fikar-secondary rounded-full"></div>
+                  </span>
+                </h3>
+                <p className="text-sm font-medium text-gray-500 mb-3">Control your current availability</p>
+              </div>
+              <div className="flex flex-col space-y-3">
+                <button
+                  onClick={() => handleStatusChange('available')}
+                  className={`flex items-center px-4 py-2 rounded-md font-semibold ${availabilityStatus === 'available'
+                      ? 'bg-green-600 text-white shadow-md'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                >
+                  <CheckCircle className="h-5 w-5 mr-2" />
+                  Available
+                  {availabilityStatus === 'available' && (
+                    <span className="ml-auto bg-green-800 text-white text-xs px-2 py-0.5 rounded">Active</span>
+                  )}
+                </button>
+                <button
+                  onClick={() => handleStatusChange('busy')}
+                  className={`flex items-center px-4 py-2 rounded-md font-semibold ${availabilityStatus === 'busy'
+                      ? 'bg-amber-500 text-white shadow-md'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                >
+                  <PauseCircle className="h-5 w-5 mr-2" />
+                  Busy
+                  {availabilityStatus === 'busy' && (
+                    <span className="ml-auto bg-orange-800 text-white text-xs px-2 py-0.5 rounded">Active</span>
+                  )}
+                </button>
+                <button
+                  onClick={() => handleStatusChange('offline')}
+                  className={`flex items-center px-4 py-2 rounded-md font-semibold ${availabilityStatus === 'offline'
+                      ? 'bg-red-600 text-white shadow-md'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                >
+                  <XCircle className="h-5 w-5 mr-2" />
+                  Offline
+                  {availabilityStatus === 'offline' && (
+                    <span className="ml-auto bg-red-800 text-white text-xs px-2 py-0.5 rounded">Active</span>
+                  )}
+                </button>
+              </div>
+              <p className="text-sm text-gray-500 mt-4">Last updated: Just now</p>
             </div>
+
+            {/* Statistics Cards */}
+            <div className="col-span-1 lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+              {/* Patients Today */}
+              <div className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.015]">
+                <div className="absolute top-0 left-0 h-24 w-24 bg-blue-100 rounded-br-full opacity-30 pointer-events-none"></div>
+                <div className="absolute bottom-0 right-0 h-24 w-24 bg-blue-100 rounded-tl-full opacity-30 pointer-events-none"></div>
+
+                <div className="relative flex flex-col items-center justify-center text-center space-y-1">
+                  <Users className="h-6 w-6 text-blue-500 mb-1" />
+                  <p className="text-sm text-gray-500">Patients Today</p>
+                  <p className="text-3xl font-bold text-gray-900">{statistics.totalPatients}</p>
+                </div>
+              </div>
+
+              {/* Completed */}
+              <div className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.015]">
+                <div className="absolute top-0 left-0 h-24 w-24 bg-green-100 rounded-br-full opacity-30 pointer-events-none"></div>
+                <div className="absolute bottom-0 right-0 h-24 w-24 bg-green-100 rounded-tl-full opacity-30 pointer-events-none"></div>
+
+                <div className="relative flex flex-col items-center justify-center text-center space-y-1">
+                  <CheckCircle className="h-6 w-6 text-green-500 mb-1" />
+                  <p className="text-sm text-gray-500">Completed</p>
+                  <p className="text-3xl font-bold text-gray-900">{statistics.completedToday}</p>
+                </div>
+              </div>
+
+              {/* Waiting Now */}
+              <div className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.015]">
+                <div className="absolute top-0 left-0 h-24 w-24 bg-amber-100 rounded-br-full opacity-30 pointer-events-none"></div>
+                <div className="absolute bottom-0 right-0 h-24 w-24 bg-amber-100 rounded-tl-full opacity-30 pointer-events-none"></div>
+
+                <div className="relative flex flex-col items-center justify-center text-center space-y-1">
+                  <Clock className="h-6 w-6 text-amber-500 mb-1" />
+                  <p className="text-sm text-gray-500">Waiting Now</p>
+                  <div className="flex items-center justify-center space-x-2">
+                    <p className="text-3xl font-bold text-gray-900">{statistics.waitingNow}</p>
+                    <span className="bg-amber-100 text-amber-600 text-xs px-2 py-0.5 rounded-full">Live</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Avg. Wait Time */}
+              <div className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.015]">
+                <div className="absolute top-0 left-0 h-24 w-24 bg-indigo-100 rounded-br-full opacity-30 pointer-events-none"></div>
+                <div className="absolute bottom-0 right-0 h-24 w-24 bg-indigo-100 rounded-tl-full opacity-30 pointer-events-none"></div>
+
+                <div className="relative flex flex-col items-center justify-center text-center space-y-1">
+                  <Clock className="h-6 w-6 text-indigo-500 mb-1" />
+                  <p className="text-sm text-gray-500">Avg. Wait Time</p>
+                  <p className="text-3xl font-bold text-gray-900">{statistics.averageWaitTime}</p>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
+
         
         {/* Main content */}
         <div className="px-4 py-6 sm:px-6 lg:px-8">

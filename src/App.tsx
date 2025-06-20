@@ -11,6 +11,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Index from "./pages/Index";
 
+import Hero from "./components/LandingPage/Hero";
 
 import PatientLogin from "./pages/PatientLogin";
 import PatientSignp from "./pages/PatientSignup"
@@ -36,6 +37,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="hero" element={<Hero />} />
+
           <Route path="/" element={<Index />} />
 
           <Route path="/patient-login" element={<PatientLogin />} />
