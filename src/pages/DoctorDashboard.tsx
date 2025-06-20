@@ -175,7 +175,7 @@ const DoctorDashboard = () => {
               {/* Nav setting */}
               <a
                 className="text-gray-500 hover:text-fikar-primary bg-gray-100 hover:bg-gray-200 p-1.5 rounded-full transition-all duration-300"
-                href="/doctor-settings"
+                href="/doc-setting"
               >
                 <span className="block transition-transform duration-300 hover:rotate-45">
                   <Settings className="h-5 w-5" />

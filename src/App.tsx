@@ -17,7 +17,7 @@ import PatientLogin from "./pages/PatientLogin";
 import PatientSignp from "./pages/PatientSignup"
 import UserDashboard from "./pages/UserDashboard";
 
-
+import DocSetting from "./lib/docSetting"
 import DoctorLogin from "./pages/DoctorLogin";
 import DoctorSignup from "./pages/DoctorSignup"
 import DoctorDashboard from "./pages/DoctorDashboard";
@@ -45,6 +45,7 @@ const App = () => (
           <Route path="/patient-signup" element={<PatientSignp />} />
           <Route path="/user-dashboard" element={<UserDashboard />} />
 
+          <Route path = "/doc-setting" element = {<DocSetting />} />
           <Route path="/doctor-login" element={<DoctorLogin/>} />
           <Route path="/doctor-signup" element={<DoctorSignup/>} />
           <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
