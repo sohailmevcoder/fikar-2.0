@@ -44,7 +44,8 @@ const defaultDoctors = [
 ];
 
 const AdminDashboard = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
+
   const [query, setQuery] = useState('');
   const [doctors, setDoctors] = useState(defaultDoctors);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -144,9 +145,9 @@ const AdminDashboard = () => {
       </div>
 
         {/* Quick Actions */}
-<div className="flex justify-between items-start gap-4 flex-wrap">
+<div className="flex justify-between items-start gap-10 flex-wrap">
   {/* Search Bar */}
-  <div className="relative w-full max-w-md flex-1">
+  <div className="relative w-full max-w-sm flex-1">
     <div className="flex items-center rounded-md border px-3 py-2 bg-white shadow-sm h-[40px]">
       <Search className="w-4 h-4 text-gray-500 mr-2" />
       <input
@@ -177,8 +178,8 @@ const AdminDashboard = () => {
   </div>
 
   {/* Today's Appointments Button */}
-  <div className="w-full max-w-md flex-1">
-    <div className="flex rounded-md border px-3 py-2 bg-white shadow-sm h-[40px] items-center justify-center">
+  <div className="relative w-full max-w-sm flex-1">
+    <div className="flex items-center rounded-md border px-1 py-2 bg-white shadow-sm h-[40px]">
       <button className="text-sm text-gray-700 font-medium">Today's Appointments</button>
     </div>
   </div>
