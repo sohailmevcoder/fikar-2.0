@@ -203,7 +203,7 @@ export default function DoctorLogin() {
                         <>
                             {!otpSent ? (
                                 <button
-                                    type="button"
+                                    type="submit"
                                     onClick={handleSendOtp}
                                     className="w-full bg-blue-700 text-white py-2 rounded-md hover:bg-blue-800 transition"
                                 >

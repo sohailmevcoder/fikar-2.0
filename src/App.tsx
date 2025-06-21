@@ -16,7 +16,7 @@ import PatientLogin from "./pages/PatientLogin";
 import PatientSignp from "./pages/PatientSignup"
 import UserDashboard from "./pages/UserDashboard";
 
-
+import DocSetting from "./components/Settings/docSetting"
 import DoctorLogin from "./pages/DoctorLogin";
 import DoctorSignup from "./pages/DoctorSignup"
 import DoctorDashboard from "./pages/DoctorDashboard";
@@ -26,6 +26,7 @@ import ClinicAdminLogin from "./pages/clinicAdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import HospitalProfile from "./pages/HospitalProfile";
+import NotificationPage from "./components/Notification/Notification";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/patient-signup" element={<PatientSignp />} />
           <Route path="/user-dashboard" element={<UserDashboard />} />
 
+          <Route path = "/doc-setting" element = {<DocSetting />} />
           <Route path="/doctor-login" element={<DoctorLogin/>} />
           <Route path="/doctor-signup" element={<DoctorSignup/>} />
           <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
@@ -50,6 +52,8 @@ const App = () => (
           <Route path="/admin-signup" element={<ClinicAdminSignup />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/hospital-profile" element={<HospitalProfile />} />
+
+          <Route path = "notification" element = {<NotificationPage />} />
 
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

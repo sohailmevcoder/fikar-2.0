@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Users, 
@@ -33,28 +32,30 @@ const currentQueue = [
     name: 'Aarav Sharma',
     age: 45,
     appointmentTime: '10:00 AM',
-    status: 'in-progress',
-    waitTime: '0 mins (Current)',
+    status: 'completed',
+    waitTime: 'Completed',
     reason: 'Follow-up Consultation',
-    phone: '+91 98765 43210'
+    phone: '+91 98765 43210',
+    completedTime: '10:25 AM'
   },
   {
     id: 2,
     name: 'Meera Patel',
     age: 36,
     appointmentTime: '10:15 AM',
-    status: 'waiting',
-    waitTime: '~15 mins',
+    status: 'completed',
+    waitTime: 'Completed',
     reason: 'Blood Pressure Check',
-    phone: '+91 87654 32109'
+    phone: '+91 87654 32109',
+    completedTime: '10:40 AM'
   },
   {
     id: 3,
     name: 'Rohan Gupta',
     age: 28,
     appointmentTime: '10:30 AM',
-    status: 'waiting',
-    waitTime: '~30 mins',
+    status: 'in-progress',
+    waitTime: '0 mins (Current)',
     reason: 'General Checkup',
     phone: '+91 76543 21098'
   },
@@ -64,23 +65,23 @@ const currentQueue = [
     age: 32,
     appointmentTime: '10:45 AM',
     status: 'waiting',
-    waitTime: '~45 mins',
+    waitTime: '~15 mins',
     reason: 'Migraine Issues',
     phone: '+91 65432 10987'
-  }
-];
-
-const upcomingAppointments = [
+  },
   {
     id: 5,
     name: 'Ajay Kumar',
     age: 52,
     appointmentTime: '11:00 AM',
-    date: 'Today',
+    status: 'waiting',
+    waitTime: '~30 mins',
     reason: 'Heart Palpitations',
-    isNew: false,
     phone: '+91 54321 09876'
-  },
+  }
+];
+
+const upcomingAppointments = [
   {
     id: 6,
     name: 'Neha Verma',
@@ -105,14 +106,16 @@ const upcomingAppointments = [
 
 const statistics = {
   totalPatients: 25,
-  completedToday: 8,
-  waitingNow: 4,
+  completedToday: 2,
+  waitingNow: 3,
   averageWaitTime: '22 mins'
 };
 
 const DoctorDashboard = () => {
   const [availabilityStatus, setAvailabilityStatus] = useState<'available' | 'busy' | 'offline'>('available');
+  const [queueFilter, setQueueFilter] = useState<'all' | 'completed' | 'waiting'>('all');
   const { toast } = useToast();
+  const queueRef = useRef<HTMLDivElement>(null);
   
   const handleStatusChange = (status: 'available' | 'busy' | 'offline') => {
     setAvailabilityStatus(status);
@@ -131,6 +134,17 @@ const DoctorDashboard = () => {
     });
   };
 
+  const scrollToQueue = (filter: 'all' | 'completed' | 'waiting' = 'all') => {
+    setQueueFilter(filter);
+    queueRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const filteredQueue = currentQueue.filter(patient => {
+    if (queueFilter === 'completed') return patient.status === 'completed';
+    if (queueFilter === 'waiting') return patient.status === 'waiting';
+    return true;
+  });
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto">
@@ -138,26 +152,27 @@ const DoctorDashboard = () => {
         <div className="bg-white border-b border-gray-200 px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              {/* Left arrow design */}
               <Link to="/" className="text-fikar-primary hover:text-fikar-secondary transiton-all duration-300">
               <div className ="bg-fikar-light/30 hover:bg-fikar-light p-1.5 rounded-full group-hover:translate-x-0.5 transition-all duration-300"><ChevronLeft className="h-5 w-5" /></div>
               </Link>
               <div className='flex-item-center ml-4'>
-                {/* <div className="h-7 w-1.5 rounded-full bg-gradient-to-b from-fikar-primary to fikar-secondard mr-3 hidden sm:block"></div> */}
                 <h1 className="ml-4 text-xl font-semibold text-fikar-dark">Doctor Dashboard</h1>
               </div>
             </div>
-            {/* right side nav */}
             <div className="flex items-center space-x-5">
               <div className="relative">
-                {/* notification bell */}
-                <button className='text-gray-500 hover:text-fikar-primary relative transition-all duration-300 hover:rotate-[5deg]'>
-                  <Bell className="h-6 w-6 mt-1" />
-                  {/* Notification count */}
-                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-semibold">3</span>
-                </button>
+                <a
+                  className="h-6 w-6 mt-1 relative group transition-all duration-300"
+                  href="/notification"
+                >
+                  <span className="absolute inset-0 rounded-full pointer-events-none transition-all duration-300 group-hover:shadow-[0_0_16px_4px_rgba(0,0,0,0.18)] group-active:shadow-[0_0_20px_6px_rgba(0,0,0,0.22)] group-hover:ring-2 group-hover:ring-yellow-500"></span>
+                  <span className="absolute inset-1 rounded-full transition-all duration-300 group-hover:bg-yellow-100"></span>
+                  <Bell className="h-6 w-6 relative z-10 transition-all duration-300 group-hover:text-yellow-700 group-hover:rotate-[5deg]" />
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-semibold z-20">
+                    3
+                  </span>
+                </a>
               </div>
-              {/* nav User profile */}
               <div className="relative">
                 <button className="flex items-center bg-gradient-to-r from-fikar-light/30 to-gray-50 rounded-full pr-1.5 sm:pr-4 pl-1.5 py-1.5 hover:shadow-md transition-all duration-300">
                   <div className="bg-gradient-to-r from-fikar-primary to-fikar-secondary rounded-full p-0.5 mr-0 sm:mr-2">
@@ -172,10 +187,9 @@ const DoctorDashboard = () => {
                   </svg>
                 </button>
               </div>
-              {/* Nav setting */}
               <a
                 className="text-gray-500 hover:text-fikar-primary bg-gray-100 hover:bg-gray-200 p-1.5 rounded-full transition-all duration-300"
-                href="/doctor-settings"
+                href="/doc-setting"
               >
                 <span className="block transition-transform duration-300 hover:rotate-45">
                   <Settings className="h-5 w-5" />
@@ -244,9 +258,11 @@ const DoctorDashboard = () => {
 
             {/* Statistics Cards */}
             <div className="col-span-1 lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
               {/* Patients Today */}
-              <div className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.015]">
+              <div 
+                className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.015] cursor-pointer"
+                onClick={() => scrollToQueue('all')}
+              >
                 <div className="absolute top-0 left-0 h-24 w-24 bg-blue-100 rounded-br-full opacity-30 pointer-events-none"></div>
                 <div className="absolute bottom-0 right-0 h-24 w-24 bg-blue-100 rounded-tl-full opacity-30 pointer-events-none"></div>
 
@@ -258,7 +274,10 @@ const DoctorDashboard = () => {
               </div>
 
               {/* Completed */}
-              <div className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.015]">
+              <div 
+                className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.015] cursor-pointer"
+                onClick={() => scrollToQueue('completed')}
+              >
                 <div className="absolute top-0 left-0 h-24 w-24 bg-green-100 rounded-br-full opacity-30 pointer-events-none"></div>
                 <div className="absolute bottom-0 right-0 h-24 w-24 bg-green-100 rounded-tl-full opacity-30 pointer-events-none"></div>
 
@@ -270,7 +289,10 @@ const DoctorDashboard = () => {
               </div>
 
               {/* Waiting Now */}
-              <div className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.015]">
+              <div 
+                className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.015] cursor-pointer"
+                onClick={() => scrollToQueue('waiting')}
+              >
                 <div className="absolute top-0 left-0 h-24 w-24 bg-amber-100 rounded-br-full opacity-30 pointer-events-none"></div>
                 <div className="absolute bottom-0 right-0 h-24 w-24 bg-amber-100 rounded-tl-full opacity-30 pointer-events-none"></div>
 
@@ -296,11 +318,9 @@ const DoctorDashboard = () => {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
-        
         {/* Main content */}
         <div className="px-4 py-6 sm:px-6 lg:px-8">
           <Tabs defaultValue="queue" className="w-full">
@@ -309,16 +329,43 @@ const DoctorDashboard = () => {
               <TabsTrigger value="appointments">Upcoming Appointments</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="queue" className="space-y-6">
+            <TabsContent value="queue" className="space-y-6" ref={queueRef}>
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-medium text-fikar-dark">Patient Queue</h2>
-                <Button variant="outline" className="border-fikar-primary text-fikar-primary hover:bg-fikar-light">
-                  <Calendar className="h-4 w-4 mr-2" /> View Schedule
-                </Button>
+                {
+                  <Button variant="outline" className="border-fikar-primary text-fikar-primary hover:bg-fikar-light">
+                    <Calendar className="h-4 w-4 mr-2" /> View Schedule
+                  </Button>
+                 /* <div className="flex space-x-2">
+                  <Button 
+                    variant={queueFilter === 'all' ? 'default' : 'outline'} 
+                    onClick={() => setQueueFilter('all')}
+                  >
+                    All ({currentQueue.length})
+                  </Button>
+                  <Button 
+                    variant={queueFilter === 'completed' ? 'default' : 'outline'} 
+                    onClick={() => setQueueFilter('completed')}
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    Completed ({statistics.completedToday})
+                  </Button>
+                  <Button 
+                    variant={queueFilter === 'waiting' ? 'default' : 'outline'} 
+                    onClick={() => setQueueFilter('waiting')}
+                    className="bg-amber-500 hover:bg-amber-600 text-white"
+                  >
+                    Waiting ({statistics.waitingNow})
+                  </Button>
+                </div> */}
               </div>
               
-              {currentQueue.map((patient, index) => (
-                <Card key={patient.id} className={`border-l-4 ${index === 0 ? 'border-l-green-500' : 'border-l-amber-500'}`}>
+              {filteredQueue.map((patient, index) => (
+                <Card key={patient.id} className={`border-l-4 ${
+                  patient.status === 'in-progress' ? 'border-l-blue-500' :
+                  patient.status === 'completed' ? 'border-l-green-500' : 
+                  'border-l-amber-500'
+                }`}>
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <div>
@@ -328,11 +375,15 @@ const DoctorDashboard = () => {
                           <Badge 
                             className={`ml-3 ${
                               patient.status === 'in-progress' 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-amber-100 text-amber-800'
+                                ? 'bg-blue-100 text-blue-800' 
+                                : patient.status === 'completed'
+                                  ? 'bg-green-100 text-green-800'
+                                  : 'bg-amber-100 text-amber-800'
                             } border-0`}
                           >
-                            {patient.status === 'in-progress' ? 'Current' : `Waiting - #${index + 1}`}
+                            {patient.status === 'in-progress' ? 'Current' : 
+                             patient.status === 'completed' ? 'Completed' : 
+                             `Waiting - #${index + 1}`}
                           </Badge>
                         </div>
                         <div className="mt-2 text-sm text-gray-500">
@@ -342,7 +393,11 @@ const DoctorDashboard = () => {
                           </div>
                           <div className="flex items-center mt-1">
                             <Clock className="h-4 w-4 mr-1" />
-                            <span>Wait time: {patient.waitTime}</span>
+                            <span>
+                              {patient.status === 'completed' 
+                                ? `Completed at: ${patient.completedTime}` 
+                                : `Wait time: ${patient.waitTime}`}
+                            </span>
                           </div>
                         </div>
                         <p className="mt-2 text-sm text-gray-700">
@@ -351,7 +406,7 @@ const DoctorDashboard = () => {
                       </div>
                       
                       <div className="flex space-x-2">
-                        {index === 0 ? (
+                        {patient.status === 'in-progress' ? (
                           <Button 
                             onClick={() => handleCompleteAppointment(patient.name)}
                             className="bg-green-600 hover:bg-green-700"
