@@ -1,371 +1,256 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Users, Calendar, Clock3, UserPlus, BarChart2, Search, X } from 'lucide-react';
-import { Dialog } from '@headlessui/react';
-import { Menu } from '@headlessui/react';
-import { ChevronDown } from 'lucide-react';
-import HospitalProfile from './pages/HospitalProfile';
+import { useState } from 'react';
+import { CirclePlus, User, ChevronDown, ChevronLeft, Settings, Search, Stethoscope, Calendar, Users, Clock, UserPlus, BarChart3 } from 'lucide-react';
 
-const defaultDoctors = [
+const doctors = [
   {
     name: 'Dr. Vivek Sharma',
-    specialty: 'Cardiologist',
-    available: 'Now',
-    todayAppts: 15,
-    status: 'available',
-    img: 'https://randomuser.me/api/portraits/men/75.jpg'
+    role: 'Cardiologist',
+    img: 'https://randomuser.me/api/portraits/men/1.jpg',
+    today: 15,
+    status: 'Available',
+    statusColor: 'green',
+    nextAvailable: 'Now',
   },
   {
     name: 'Dr. Priya Patel',
-    specialty: 'Pediatrician',
-    available: '~45 mins',
-    todayAppts: 12,
-    status: 'busy',
-    img: 'https://randomuser.me/api/portraits/women/44.jpg'
+    role: 'Pediatrician',
+    img: 'https://randomuser.me/api/portraits/women/2.jpg',
+    today: 12,
+    status: 'Busy (Queue: 3)',
+    statusColor: 'amber',
+    nextAvailable: '~45 mins',
   },
   {
     name: 'Dr. Ajay Kumar',
-    specialty: 'Neurologist',
-    available: 'Tomorrow, 9 AM',
-    todayAppts: 8,
-    status: 'available',
-    img: 'https://randomuser.me/api/portraits/men/12.jpg'
+    role: 'Neurologist',
+    img: 'https://randomuser.me/api/portraits/men/3.jpg',
+    today: 8,
+    status: 'Offline',
+    statusColor: 'red',
+    nextAvailable: 'Tomorrow, 9 AM',
   },
   {
     name: 'Dr. Meera Singh',
-    specialty: 'Dermatologist',
-    available: 'Now',
-    todayAppts: 10,
-    status: 'available',
-    img: 'https://randomuser.me/api/portraits/women/10.jpg'
+    role: 'Dermatologist',
+    img: 'https://randomuser.me/api/portraits/women/4.jpg',
+    today: 10,
+    status: 'Available',
+    statusColor: 'green',
+    nextAvailable: 'Now',
   },
 ];
 
-const AdminDashboard = () => {
-  const navigate = useNavigate(); 
+ const appointments = [
+  { patient: 'Rahul Verma', phone: '+91 98765 43210', doctor: 'Dr. Vivek Sharma', time: '10:00 AM', status: 'Completed', statusColor: 'green' },
+  { patient: 'Aisha Khan', phone: '+91 87654 32109', doctor: 'Dr. Priya Patel', time: '10:15 AM', status: 'In Progress', statusColor: 'blue' },
+  { patient: 'Vikram Malhotra', phone: '+91 76543 21098', doctor: 'Dr. Ajay Kumar', time: '11:00 AM', status: 'Waiting', statusColor: 'amber' },
+  { patient: 'Neha Gupta', phone: '+91 65432 10987', doctor: 'Dr. Meera Singh', time: '11:30 AM', status: 'Confirmed', statusColor: 'gray' },
+  { patient: 'Suresh Patel', phone: '+91 54321 09876', doctor: 'Dr. Vivek Sharma', time: '12:00 PM', status: 'Waiting', statusColor: 'amber' },
+];
 
-  const [query, setQuery] = useState('');
-  const [doctors, setDoctors] = useState(defaultDoctors);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newDoctor, setNewDoctor] = useState({
-    name: '',
-    specialty: '',
-    available: '',
-    img: '',
-    todayAppts: 0,
-    status: 'available'
-  });
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editDoctorIndex, setEditDoctorIndex] = useState(null);
 
-  const filteredDoctors = doctors.filter(
-    (doc) =>
-      doc.name.toLowerCase().includes(query.toLowerCase()) ||
-      doc.specialty.toLowerCase().includes(query.toLowerCase())
-  );
+const ClinicAdminPanel = () => {
+  const [activeTab, setActiveTab] = useState('Doctors');
 
-  const handleAddDoctor = () => {
-    setDoctors([newDoctor, ...doctors]);
-    setNewDoctor({ name: '', specialty: '', available: '', img: '', todayAppts: 0, status: 'available' });
-    setIsModalOpen(false);
-  };
-
-  const handleEditDoctor = () => {
-    const updatedDoctors = [...doctors];
-    updatedDoctors[editDoctorIndex] = newDoctor;
-    setDoctors(updatedDoctors);
-    setNewDoctor({ name: '', specialty: '', available: '', img: '', todayAppts: 0, status: 'available' });
-    setIsEditModalOpen(false);
-  };
-        
   return (
-    <div className="p-6 space-y-6">
-           {/* Header */}
-        <header className="flex items-center justify-between p-4 border-b bg-white">
-  <div className="flex items-center gap-3">
-    <button className="text-xl font-bold">&larr;</button>
-    <h1 className="text-xl font-semibold">Clinic Admin</h1>
-  </div>
-  <div className="flex items-center gap-4">
-       <button
-  onClick={() => navigate('/hospital-profile')}
-  className="border rounded px-3 py-1 text-sm font-medium text-gray-700 bg-white hover:bg-gray-100"
->
-  City Hospital
-   </button>
-    <div className="text-sm text-gray-500">
-      {new Date().toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })}
-    </div>
-  </div>
-</header>
-      
-      {/* Dashboard Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="flex flex-col items-start p-4">
-            <Users className="text-blue-600" />
-            <p className="text-xl font-semibold">{doctors.length}</p>
-            <span className="text-sm text-green-600">{doctors.filter(d => d.status === 'available').length} active now</span>
-            <p className="text-sm text-gray-500">Doctors</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex flex-col items-start p-4">
-            <Calendar className="text-purple-600" />
-            <p className="text-xl font-semibold">124</p>
-            <span className="text-sm text-green-600">45 completed today</span>
-            <p className="text-sm text-gray-500">Appointments</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex flex-col items-start p-4">
-            <Users className="text-orange-600" />
-            <p className="text-xl font-semibold">16</p>
-            <span className="text-sm text-orange-600">Across all doctors</span>
-            <p className="text-sm text-gray-500">Waiting</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex flex-col items-start p-4">
-            <Clock3 className="text-blue-600" />
-            <p className="text-xl font-semibold">28 mins</p>
-            <span className="text-sm text-orange-600">Average wait time</span>
-            <p className="text-sm text-gray-500">Wait Time</p>
-          </CardContent>
-        </Card>
-      </div>
-
-        {/* Quick Actions */}
-<div className="flex justify-between items-start gap-10 flex-wrap">
-  {/* Search Bar */}
-  <div className="relative w-full max-w-sm flex-1">
-    <div className="flex items-center rounded-md border px-3 py-2 bg-white shadow-sm h-[40px]">
-      <Search className="w-4 h-4 text-gray-500 mr-2" />
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search doctors, patients, or appointments..."
-        className="w-full outline-none text-sm"
-      />
-    </div>
-    {query && (
-      <div className="absolute z-10 mt-1 w-full bg-white border shadow-md rounded-md max-h-60 overflow-y-auto">
-        {filteredDoctors.length > 0 ? (
-          filteredDoctors.map((doc, i) => (
-            <div
-              key={i}
-              className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm"
-              onClick={() => setQuery(doc.name)}
-            >
-              {doc.name} - <span className="text-gray-500">{doc.specialty}</span>
-            </div>
-          ))
-        ) : (
-          <div className="px-4 py-2 text-sm text-gray-500">No results found</div>
-        )}
-      </div>
-    )}
-  </div>
-
-  {/* Today's Appointments Button */}
-  <div className="relative w-full max-w-sm flex-1">
-    <div className="flex items-center rounded-md border px-1 py-2 bg-white shadow-sm h-[40px]">
-      <button className="text-sm text-gray-700 font-medium">Today's Appointments</button>
-    </div>
-  </div>
-
-  {/* Buttons */}
-  <div className="flex space-x-2">
-    <Button className="flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
-      <UserPlus size={16} /> Add Doctor
-    </Button>
-    <Button variant="outline" className="flex items-center gap-2">
-      <BarChart2 size={16} /> Reports
-    </Button>
-  </div>
-</div>
-
-
-      {/* Doctor List */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Doctor Status</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredDoctors.map((doc, index) => (
-            <Card
-              key={index}
-              className={`flex items-center justify-between p-4 ${
-                doc.status === 'available' ? 'border-l-4 border-green-500' : 'border-l-4 border-yellow-500'
-              }`}
-            >
-              <div className="flex items-center space-x-4">
-                <img
-                  src={doc.img}
-                  alt={doc.name}
-                  className="w-14 h-14 rounded-full border"
-                />
-                <div>
-                  <p className="font-semibold">{doc.name}</p>
-                  <p className="text-sm text-gray-500">{doc.specialty}</p>
-                  <p className="text-sm text-gray-600">
-                    Today: <strong>{doc.todayAppts}</strong> appts | Next: {doc.available}
-                  </p>
+    <div>
+      {/* Top Bar */}
+      <div className="bg-white sticky top-0 z-10 shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <a className="group text-fikar-primary hover:text-fikar-secondary transition-all duration-300" href="/">
+                <div className="bg-fikar-light/30 hover:bg-fikar-light p-1.5 rounded-full group-hover:-translate-x-0.5 transition-all duration-300">
+                  <ChevronLeft className="h-5 w-5" />
                 </div>
+              </a>
+              <div className="flex items-center ml-4">
+                <div className="h-7 w-1.5 rounded-full bg-gradient-to-b from-fikar-primary to-fikar-secondary mr-3 hidden sm:block"></div>
+                <h1 className="text-xl font-semibold text-fikar-dark">Clinic Admin</h1>
               </div>
+            </div>
+            <div className="flex items-center space-x-5">
+              <div className="relative">
+                <button className="flex items-center bg-gradient-to-r from-fikar-light/30 to-gray-50 rounded-full pr-2 sm:pr-4 pl-1.5 py-1.5 hover:shadow-md transition-all duration-300">
+                  <div className="bg-gradient-to-r from-fikar-primary to-fikar-secondary rounded-full p-0.5 mr-2">
+                    <div className="bg-white rounded-full p-1">
+                      <User className="h-4 w-4 text-fikar-primary" />
+                    </div>
+                  </div>
+                  <span className="hidden sm:block text-sm font-medium text-gray-700">City Hospital</span>
+                  <ChevronDown className="h-4 w-4 ml-1 text-gray-500" />
+                </button>
+              </div>
+              <div className="relative">
+                <a className="text-gray-500 hover:text-fikar-primary bg-gray-100 hover:bg-gray-200 p-1.5 rounded-full transition-all duration-300 block" href="/admin-settings">
+                  <Settings className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Header Date + Stats */}
+      <div className="px-4 py-6 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold text-fikar-dark">Clinic Dashboard</h2>
+          <div className="text-sm text-gray-500">
+            <span>Saturday, June 21, 2025</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+          <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+            <h3 className="text-sm font-medium text-gray-500 mb-1">Doctors</h3>
+            <div className="flex items-center">
+              <Stethoscope className="h-6 w-6 text-fikar-primary mr-2" />
+              <span className="text-3xl font-bold text-fikar-dark">12</span>
+            </div>
+            <div className="mt-1 text-xs text-green-600">8 active now</div>
+          </div>
+
+          <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+            <h3 className="text-sm font-medium text-gray-500 mb-1">Appointments</h3>
+            <div className="flex items-center">
+              <Calendar className="h-6 w-6 text-fikar-primary mr-2" />
+              <span className="text-3xl font-bold text-fikar-dark">124</span>
+            </div>
+            <div className="mt-1 text-xs text-green-600">45 completed today</div>
+          </div>
+
+          <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+            <h3 className="text-sm font-medium text-gray-500 mb-1">Waiting</h3>
+            <div className="flex items-center">
+              <Users className="h-6 w-6 text-amber-500 mr-2" />
+              <span className="text-3xl font-bold text-fikar-dark">16</span>
+            </div>
+            <div className="mt-1 text-xs text-amber-600">Across all doctors</div>
+          </div>
+
+          <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+            <h3 className="text-sm font-medium text-gray-500 mb-1">Wait Time</h3>
+            <div className="flex items-center">
+              <Clock className="h-6 w-6 text-fikar-secondary mr-2" />
+              <span className="text-3xl font-bold text-fikar-dark">28 mins</span>
+            </div>
+            <div className="mt-1 text-xs text-amber-600">Average wait time</div>
+          </div>
+
+          <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 col-span-2">
+            <div className="flex justify-between items-center">
+              <h3 className="text-sm font-medium text-gray-700">Quick Actions</h3>
               <div className="flex space-x-2">
-                <Button size="sm" variant="default" onClick={() => { setSelectedDoctor(doc); setIsScheduleOpen(true); }}>
-                  View Schedule
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => { setEditDoctorIndex(index); setNewDoctor(doc); setIsEditModalOpen(true); }}>
-                  Edit
-                </Button>
+                <button className="inline-flex items-center gap-2 text-sm font-medium rounded-md px-3 h-9 bg-fikar-primary hover:bg-fikar-secondary text-white">
+                  <UserPlus className="h-4 w-4 mr-1" /> Add Doctor
+                </button>
+                <button className="inline-flex items-center gap-2 text-sm font-medium rounded-md px-3 h-9 border border-fikar-primary text-fikar-primary hover:bg-fikar-light">
+                  <BarChart3 className="h-4 w-4 mr-1" /> Reports
+                </button>
               </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Add Doctor Modal */}
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
-  <div className="fixed inset-0 bg-black/20" aria-hidden="true" />
-  <div className="fixed inset-0 flex items-center justify-center p-4">
-    <Dialog.Panel className="w-full max-w-xl space-y-4 rounded-lg bg-white p-6 shadow-xl overflow-y-auto max-h-[90vh]">
-      <div className="flex justify-between items-center mb-2">
-        <Dialog.Title className="text-lg font-semibold">Add New Doctor</Dialog.Title>
-        <button onClick={() => setIsModalOpen(false)}><X size={20} /></button>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <input type="text" placeholder="Doctor Name" value={newDoctor.name} onChange={(e) => setNewDoctor({ ...newDoctor, name: e.target.value })} className="border p-2 rounded-md text-sm" />
-        <input type="text" placeholder="Specialty" value={newDoctor.specialty} onChange={(e) => setNewDoctor({ ...newDoctor, specialty: e.target.value })} className="border p-2 rounded-md text-sm" />
-        <input type="number" placeholder="Experience (years)" value={newDoctor.experience || ''} onChange={(e) => setNewDoctor({ ...newDoctor, experience: e.target.value })} className="border p-2 rounded-md text-sm" />
-        <input type="number" step="0.1" placeholder="Rating (out of 5)" value={newDoctor.rating || ''} onChange={(e) => setNewDoctor({ ...newDoctor, rating: e.target.value })} className="border p-2 rounded-md text-sm" />
-        <input type="number" placeholder="Fees (₹)" value={newDoctor.fees || ''} onChange={(e) => setNewDoctor({ ...newDoctor, fees: e.target.value })} className="border p-2 rounded-md text-sm" />
-        <input type="tel" placeholder="Contact Number" value={newDoctor.contact || ''} onChange={(e) => setNewDoctor({ ...newDoctor, contact: e.target.value })} className="border p-2 rounded-md text-sm" />
-        <select value={newDoctor.clinic || ''} onChange={(e) => setNewDoctor({ ...newDoctor, clinic: e.target.value })} className="border p-2 rounded-md text-sm">
-          <option value="">Select Clinic</option>
-          <option value="Clinic A">Clinic A</option>
-          <option value="Clinic B">Clinic B</option>
-          <option value="Clinic C">Clinic C</option>
-        </select>
-        <input type="text" placeholder="Image URL" value={newDoctor.img} onChange={(e) => setNewDoctor({ ...newDoctor, img: e.target.value })} className="border p-2 rounded-md text-sm" />
-        <input type="number" placeholder="Today's Appointments" value={newDoctor.todayAppts || ''} onChange={(e) => setNewDoctor({ ...newDoctor, todayAppts: parseInt(e.target.value || '0') })} className="border p-2 rounded-md text-sm" />
-      </div>
-
-      {/* Days */}
-      <div>
-        <label className="text-sm font-semibold">Available Days:</label>
-        <div className="flex flex-wrap gap-2 mt-1">
-          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-            <label key={day} className="text-sm flex items-center gap-1">
-              <input
-                type="checkbox"
-                checked={newDoctor.days?.includes(day) || false}
-                onChange={() => {
-                  const days = newDoctor.days || [];
-                  setNewDoctor({
-                    ...newDoctor,
-                    days: days.includes(day) ? days.filter(d => d !== day) : [...days, day]
-                  });
-                }}
-              />
-              {day}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Time Slots */}
-      <div>
-        <label className="text-sm font-semibold">Time Slots:</label>
-        <div className="space-y-2 mt-2">
-          {(newDoctor.timeSlots || ['']).map((slot, idx) => (
-            <div key={idx} className="flex gap-2 items-center">
-              <input
-                type="text"
-                value={slot}
-                placeholder="e.g., 10:00 AM - 12:00 PM"
-                onChange={(e) => {
-                  const updatedSlots = [...(newDoctor.timeSlots || [])];
-                  updatedSlots[idx] = e.target.value;
-                  setNewDoctor({ ...newDoctor, timeSlots: updatedSlots });
-                }}
-                className="border p-2 rounded-md text-sm w-full"
-              />
-              <Button variant="outline" size="icon" onClick={() => {
-                const updatedSlots = (newDoctor.timeSlots || []).filter((_, i) => i !== idx);
-                setNewDoctor({ ...newDoctor, timeSlots: updatedSlots });
-              }}>
-                <X size={16} />
-              </Button>
             </div>
-          ))}
-          <Button
-            variant="ghost"
-            onClick={() => setNewDoctor({
-              ...newDoctor,
-              timeSlots: [...(newDoctor.timeSlots || []), '']
-            })}
-            className="text-blue-600 hover:underline text-sm"
-          >
-            + Add Slot
-          </Button>
+          </div>
         </div>
-      </div>
 
-      <Button onClick={handleAddDoctor} className="w-full mt-4">Add Doctor</Button>
-    </Dialog.Panel>
-  </div>
-</Dialog>
-   {/* View Schedule Modal */}
-      <Dialog open={isScheduleOpen} onClose={() => setIsScheduleOpen(false)} className="relative z-50">
-        <div className="fixed inset-0 bg-black/20" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="w-full max-w-md space-y-4 rounded-lg bg-white p-6 shadow-xl">
-            <div className="flex justify-between items-center mb-2">
-              <Dialog.Title className="text-lg font-semibold">Doctor Schedule</Dialog.Title>
-              <button onClick={() => setIsScheduleOpen(false)}><X size={20} /></button>
-            </div>
-            {selectedDoctor && (
-              <div className="space-y-2">
-                <p><strong>Name:</strong> {selectedDoctor.name}</p>
-                <p><strong>Specialty:</strong> {selectedDoctor.specialty}</p>
-                <p><strong>Next Available:</strong> {selectedDoctor.available}</p>
-                <p><strong>Today’s Appointments:</strong> {selectedDoctor.todayAppts}</p>
+        {/* Search Input */}
+        <form className="my-8">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              className="pl-10 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              placeholder="Search doctors, patients, or appointments..."
+            />
+          </div>
+        </form>
+
+        {/* Tabs + Doctors */}
+        <div className="mt-10">
+          <div className="grid w-full grid-cols-2 mb-8 h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
+            <button onClick={() => setActiveTab('Doctors')} className={`px-3 py-1.5 text-sm font-medium rounded-sm ${activeTab === 'Doctors' ? 'bg-white text-black shadow' : ''}`}>Doctors</button>
+            <button onClick={() => setActiveTab('Appointments')} className={`px-3 py-1.5 text-sm font-medium rounded-sm ${activeTab === 'Appointments' ? 'bg-white text-black shadow' : ''}`}>Today's Appointments</button>
+          </div>
+
+          {activeTab === 'Doctors' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-medium text-fikar-dark">Doctor Status</h2>
+                <button className="inline-flex items-center justify-center gap-2 text-sm font-medium border bg-background text-fikar-primary border-fikar-primary hover:bg-fikar-light rounded-md px-4 py-2 h-10">
+                  <CirclePlus className="h-4 w-4 mr-2" /> Add New Doctor
+                </button>
               </div>
-            )}
-          </Dialog.Panel>
-        </div>
-      </Dialog>
-
-      {/* Edit Doctor Modal */}
-      <Dialog open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} className="relative z-50">
-        <div className="fixed inset-0 bg-black/20" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="w-full max-w-md space-y-4 rounded-lg bg-white p-6 shadow-xl">
-            <div className="flex justify-between items-center mb-2">
-              <Dialog.Title className="text-lg font-semibold">Edit Doctor</Dialog.Title>
-              <button onClick={() => setIsEditModalOpen(false)}><X size={20} /></button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {doctors.map((doc, idx) => (
+                  <div key={idx} className="rounded-lg border bg-card shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                    <div className="flex">
+                      <div className="w-1/3 bg-fikar-light p-4 flex flex-col justify-center items-center">
+                        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white">
+                          <img src={doc.img} alt={doc.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className={`mt-2 text-xs font-semibold bg-${doc.statusColor}-100 text-${doc.statusColor}-800 px-2.5 py-0.5 rounded-full`}>{doc.status}</div>
+                      </div>
+                      <div className="w-2/3 p-4">
+                        <h3 className="text-lg font-semibold text-fikar-dark">{doc.name}</h3>
+                        <p className="text-sm text-gray-600">{doc.role}</p>
+                        <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                          <div><span className="text-gray-500">Today:</span><span className="font-medium text-fikar-dark ml-1">{doc.today} appts</span></div>
+                          <div><span className="text-gray-500">Next available:</span><span className="font-medium text-fikar-dark ml-1">{doc.nextAvailable}</span></div>
+                        </div>
+                        <div className="mt-4 flex space-x-2">
+                          <button className="inline-flex items-center justify-center gap-2 text-sm font-medium border bg-background text-fikar-primary border-fikar-primary hover:bg-fikar-light rounded-md px-3 h-9">View Schedule</button>
+                       
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <input type="text" placeholder="Doctor Name" value={newDoctor.name} onChange={(e) => setNewDoctor({ ...newDoctor, name: e.target.value })} className="w-full border p-2 rounded-md text-sm" />
-            <input type="text" placeholder="Specialty" value={newDoctor.specialty} onChange={(e) => setNewDoctor({ ...newDoctor, specialty: e.target.value })} className="w-full border p-2 rounded-md text-sm" />
-            <input type="text" placeholder="Available Time" value={newDoctor.available} onChange={(e) => setNewDoctor({ ...newDoctor, available: e.target.value })} className="w-full border p-2 rounded-md text-sm" />
-            <input type="text" placeholder="Image URL" value={newDoctor.img} onChange={(e) => setNewDoctor({ ...newDoctor, img: e.target.value })} className="w-full border p-2 rounded-md text-sm" />
-            <Button onClick={handleEditDoctor} className="w-full">Save Changes</Button>
-          </Dialog.Panel>
+          )}
+          
+         {activeTab === 'Appointments' && (
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {appointments.map((appt, idx) => (
+                    <tr key={idx}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{appt.patient}</div>
+                        <div className="text-sm text-gray-500">{appt.phone}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{appt.doctor}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{appt.time}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-${appt.statusColor}-100 text-${appt.statusColor}-800`}>
+                          {appt.status}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button className="underline hover:no-underline text-fikar-primary hover:text-fikar-secondary">Details</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-      </Dialog>
+      </div>
     </div>
   );
 };
 
-export default AdminDashboard;
+export default ClinicAdminPanel;
