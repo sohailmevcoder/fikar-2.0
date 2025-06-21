@@ -27,6 +27,16 @@ const initialHospitals = [
     phone: '07512345678',
     link: 'https://g.co/kgs/xyz123',
   },
+  {
+    name: 'Apollo Hospital',
+    image: vismImage,
+    rating: '4.5',
+    reviews: '210',
+    description: 'Multi-speciality Hospital in Gwalior',
+    address: 'Near ABC Chowk, Lashkar, Gwalior, Madhya Pradesh 474001',
+    phone: '07512345678',
+    link: 'https://g.co/kgs/xyz123',
+  },
 ];
 
 const HospitalProfile = () => {
@@ -192,6 +202,89 @@ const HospitalProfile = () => {
 
       {/* Modals: Share + Add */}
       {/* ... your AnimatePresence modals stay same as above ... */}
+      <AnimatePresence>
+  {isShareOpen && (
+    <motion.div
+      className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div
+        className="bg-white w-80 p-4 rounded shadow-lg space-y-4 relative"
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 50, opacity: 0 }}
+      >
+        <button onClick={() => setIsShareOpen(false)} className="absolute top-2 right-2 text-gray-500 hover:text-black">
+          <X className="w-5 h-5" />
+        </button>
+        <h3 className="text-lg font-semibold">Share</h3>
+        <div className="space-y-2">
+          <a href={`https://facebook.com/sharer/sharer.php?u=${shareLink}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-blue-600">📘 Facebook</a>
+          <a href={`https://wa.me/?text=${shareLink}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-green-600">🟢 WhatsApp</a>
+          <a href={`https://x.com/intent/tweet?url=${shareLink}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-black">❌ X (Twitter)</a>
+          <a href={`mailto:?body=${shareLink}`} className="flex items-center gap-2 text-gray-700">✉️ Email</a>
+          <button onClick={handleCopy} className="text-sm text-blue-600 hover:underline">Click to copy link</button>
+          <div className="text-xs text-gray-500">{shareLink}</div>
+        </div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+<AnimatePresence>
+  {isAddOpen && (
+    <motion.div
+      className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div
+        className="bg-white w-[400px] max-w-full p-6 rounded-md shadow-lg space-y-4 relative"
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 50, opacity: 0 }}
+      >
+        <button onClick={() => setIsAddOpen(false)} className="absolute top-2 right-2 text-gray-500 hover:text-black">
+          <X className="w-5 h-5" />
+        </button>
+        <h2 className="text-lg font-semibold">Add New Hospital</h2>
+        <form
+          className="space-y-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setHospitals([...hospitals, newHospital]);
+            setNewHospital({
+              name: '',
+              address: '',
+              phone: '',
+              description: '',
+              rating: '',
+              reviews: '',
+              image: '',
+              link: '',
+            });
+            setIsAddOpen(false);
+          }}
+        >
+          <input type="text" required placeholder="Hospital Name" value={newHospital.name} onChange={(e) => setNewHospital({ ...newHospital, name: e.target.value })} className="w-full border px-3 py-2 rounded text-sm" />
+          <input type="text" placeholder="Description" value={newHospital.description} onChange={(e) => setNewHospital({ ...newHospital, description: e.target.value })} className="w-full border px-3 py-2 rounded text-sm" />
+          <input type="text" placeholder="Address" value={newHospital.address} onChange={(e) => setNewHospital({ ...newHospital, address: e.target.value })} className="w-full border px-3 py-2 rounded text-sm" />
+          <input type="tel" placeholder="Phone" value={newHospital.phone} onChange={(e) => setNewHospital({ ...newHospital, phone: e.target.value })} className="w-full border px-3 py-2 rounded text-sm" />
+          <div className="flex gap-2">
+            <input type="text" placeholder="Rating" value={newHospital.rating} onChange={(e) => setNewHospital({ ...newHospital, rating: e.target.value })} className="w-full border px-3 py-2 rounded text-sm" />
+            <input type="text" placeholder="Reviews" value={newHospital.reviews} onChange={(e) => setNewHospital({ ...newHospital, reviews: e.target.value })} className="w-full border px-3 py-2 rounded text-sm" />
+          </div>
+          <input type="text" placeholder="Google Map Link" value={newHospital.link} onChange={(e) => setNewHospital({ ...newHospital, link: e.target.value })} className="w-full border px-3 py-2 rounded text-sm" />
+          <button type="submit" className="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Add Hospital</button>
+        </form>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
     </div>
   );
 };

@@ -479,22 +479,18 @@ const UserDashboard = () => {
   const [selectedPanel, setSelectedPanel] = useState<'dashboard' | 'Appointment' | 'Location' | 'Search' | 'Report'>(initialPanel);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
- 
-
-// Filter logic for upcoming appointments
-const filteredAppointments = appointments.filter((appt) =>
-  appt.doctor.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  appt.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  appt.location.toLowerCase().includes(searchQuery.toLowerCase())
+  // Search Bar in Search
+  const filteredDoctors = doctors.filter((doc) =>
+  `${doc.name} ${doc.specialization} ${doc.location}`
+    .toLowerCase()
+    .includes(searchQuery.toLowerCase())
 );
 
-// Filter logic for past appointments
-const filteredPastAppointments = pastAppointments.filter((appt) =>
-  appt.doctor.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  (appt.specialty || appt.specialization || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-  appt.location.toLowerCase().includes(searchQuery.toLowerCase())
+const filteredHospitals = hospitalname.filter((hospital) =>
+  `${hospital.name} ${hospital.specialty} ${hospital.location}`
+    .toLowerCase()
+    .includes(searchQuery.toLowerCase())
 );
-
 
   const [activeTab, setActiveTab] = useState<'doctors' | 'hospitals'>('doctors');
   const { toast } = useToast();
@@ -1324,10 +1320,12 @@ useEffect(() => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
-              type="text"
-              placeholder="Search by doctor, specialty, hospital or symptom..."
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-10 pr-10"
-            />
+             type="text"
+            placeholder="Search by doctor, specialty, hospital or symptom..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-10 pr-10"
+/>
           </div>
 
           {/* Buttons */}
@@ -1390,7 +1388,8 @@ useEffect(() => {
 
   {activeTab === "doctors" ? (
     <div className="space-y-4">
-      {doctors.map((doc) => (
+      {filteredDoctors.map((doc) => (
+
         <div
           key={doc.id}
           className="rounded-lg border bg-white text-gray-800 shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between"
@@ -1453,7 +1452,8 @@ useEffect(() => {
   ) : (
     
     <div className="space-y-4">
-      {hospitalname.map((hospital) => (
+      {filteredHospitals.map((hospital) => (
+
         <div
           key={hospital.id}
           className="rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow"
