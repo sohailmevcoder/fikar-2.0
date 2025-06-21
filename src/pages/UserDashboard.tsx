@@ -1,10 +1,9 @@
-// File: UserDashboard.tsx
 
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Search,
-  Calendar,
+  Search,Calendar,
   ChevronRight,
   MapPin,
   FileText,
@@ -22,11 +21,76 @@ import {
   Hospital,
   Phone,
   Navigation,
+  Stethoscope,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
 const notificationCount = 3;
+//  use in search
+const specialties = [
+  { emoji: '❤️', name: 'Cardiology' },
+  { emoji: '🧴', name: 'Dermatology' },
+  { emoji: '🦴', name: 'Orthopedics' },
+  { emoji: '👶', name: 'Pediatrics' },
+  { emoji: '👩', name: 'Gynecology' },
+  { emoji: '🧠', name: 'Neurology' },
+];
+// use in search
+const hospitalname = [
+  {
+    id: 1,
+    name: "ITM Hospital & Research Center",
+    specialty: "Cardiac Center",
+    rating: 4.7,
+    doctors: 45,
+    distance: "2.5 km",
+    location: "Sector 10",
+    facilities: ["Emergency Care", "ICU", "Pharmacy", "Lab Services"],
+    image: "/hospital-1.jpg",
+  },
+  {
+    id: 2,
+    name: "Max Super Speciality Hospital",
+    specialty: "Multi-Speciality",
+    rating: 4.8,
+    doctors: 120,
+    distance: "8.3 km",
+    location: "Saket, New Delhi",
+    facilities: ["Emergency Care", "ICU", "Pharmacy", "Lab Services", "Radiology"],
+    image: "/hospital-2.jpg",
+  },
+  {
+    id: 3,
+    name: "Apollo Hospitals",
+    specialty: "Multi-Speciality",
+    rating: 4.9,
+    doctors: 150,
+    distance: "10.1 km",
+    location: "Indraprastha, Delhi",
+    facilities: ["Emergency Care", "ICU", "Pharmacy", "Lab Services", "Radiology", "Oncology"],
+    image: "/hospital-3.jpg",
+  },
+  {
+    id: 4,
+    name: "Fortis Hospital",
+    specialty: "Multi-Speciality",
+    rating: 4.6,
+    doctors: 85,
+    distance: "7.2 km",
+    location: "Sector 62, Noida",
+    facilities: ["Emergency Care", "ICU", "Pharmacy", "Lab Services", "Dialysis"],
+    image: "/hospital-4.jpg",
+  }
+  
+];
+
+
+
+
+// {'--------------------------------------------Used in Location--------------------------------'}
+
+
 
 const hospitals = [
   {
@@ -35,8 +99,9 @@ const hospitals = [
     specialties: ['Cardiology', 'Neurology', 'General Medicine'],
     rating: 4.6,
     distance: '2.3 km',
-    timing: '24 Hours',
     phone: '+91 11 2345 6789',
+    hours: '24 Hours',
+    url: '/patient-hospital/1',
   },
   {
     id: 2,
@@ -44,8 +109,9 @@ const hospitals = [
     specialties: ['Oncology', 'Pediatrics', 'Orthopedics'],
     rating: 4.5,
     distance: '4.1 km',
-    timing: '8:00 AM - 10:00 PM',
     phone: '+91 11 3456 7890',
+    hours: '8:00 AM - 10:00 PM',
+    url: '/patient-hospital/2',
   },
   {
     id: 3,
@@ -53,11 +119,14 @@ const hospitals = [
     specialties: ['Emergency Care', 'Surgery', 'Radiology'],
     rating: 4.7,
     distance: '3.2 km',
-    timing: '24 Hours',
     phone: '+91 11 4567 8901',
+    hours: '24 Hours',
+    url: '/patient-hospital/3',
   },
 ];
 
+
+// {'--------------------------------------------Used in Appointment--------------------------------'}
 
 
 const pastAppointments = [
@@ -86,21 +155,71 @@ const pastAppointments = [
     actions: ['details'],
   },
 ];
-
+// use in search
 const doctors = [
   {
     id: 1,
-    name: 'Rajesh Kumar',
-    specialty: 'Cardiologist',
-    image: '/images/doc1.jpg',
+    initials: 'DRK',
+    name: 'Dr. Rajesh Kumar',
+    specialization: 'Cardiologist',
+    rating: 4.8,
+    experience: '15 years experience',
+    availability: 'Available Today',
+    distance: '2.5 km',
+    location: 'City Heart Hospital, Sector 10, Gurgaon',
+    fee: '₹1,200',
   },
   {
     id: 2,
-    name: 'Priya Sharma',
-    specialty: 'Dermatologist',
-    image: '/images/doc2.jpg',
+    initials: 'DPS',
+    name: 'Dr. Priya Sharma',
+    specialization: 'Dermatologist',
+    rating: 4.5,
+    experience: '8 years experience',
+    availability: 'Available Today',
+    distance: '4.8 km',
+    hospital: 'Skin Care Clinic, Connaught Place, New Delhi',
+    fee: '₹900',
+  },
+  {
+    id: 3,
+    initials: 'DMV',
+    name: 'Dr. Manish Verma',
+    specialization: 'General Physician',
+    rating: 4.7,
+    experience: '12 years experience',
+    availability: null,
+    distance: '6.3 km',
+    hospital: 'City General Hospital, Sector 15, Noida',
+    fee: '₹800',
+  },
+  {
+    id: 4,
+    initials: 'DSG',
+    name: 'Dr. Sanjay Gupta',
+    specialization: 'Orthopedic',
+    rating: 4.9,
+    experience: '20 years experience',
+    availability: 'Available Today',
+    distance: '3.1 km',
+    hospital: 'Bone & Joint Clinic, Model Town, Delhi',
+    fee: '₹1,500',
+  },
+  {
+    id: 5,
+    initials: 'DKP',
+    name: 'Dr. Kavita Patel',
+    specialization: 'Gynecologist',
+    rating: 4.6,
+    experience: '10 years experience',
+    availability: null,
+    distance: '5.5 km',
+    hospital: "Women's Health Clinic, Vasant Vihar, New Delhi",
+    fee: '₹1,100',
   },
 ];
+
+// used in appointment
 
 const resentdoctors = [
   {
@@ -131,6 +250,10 @@ const resentdoctors = [
     bookUrl: '/patient-book/3',
   },
 ];
+
+
+// {--------------------------------------------Used in  Dasboard & appointment--------------------------------'}
+
 
 const appointments = [
   {
@@ -174,21 +297,66 @@ const appointments = [
   },
 ];
 
-const DashboardCard = ({ icon, title, desc, to, color }) => (
-  <Link to={to} className={`rounded-lg border bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer border-l-4 border-${color}-500`}>
-    <div className="p-6 pt-5">
-      <div className="flex items-center">
-        <div className={`rounded-full bg-${color}-100 p-3 mr-4`}>
-          {icon}
-        </div>
-        <div>
-          <h3 className="font-medium text-gray-900">{title}</h3>
-          <p className="text-sm text-gray-500">{desc}</p>
+
+
+
+
+interface DashboardCardProps {
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  color?: 'blue' | 'green' | 'purple' | 'red' | 'gray';
+  to?: string;
+  onClick?: () => void;
+}
+
+const DashboardCard: React.FC<DashboardCardProps> = ({
+  icon,
+  title,
+  desc,
+  color = 'blue',
+  to,
+  onClick,
+}) => {
+  const Wrapper: React.ElementType = to ? Link : 'div';
+  const wrapperProps = to ? { to } : { onClick };
+
+  return (
+    <Wrapper
+      {...wrapperProps}
+      className={`rounded-lg border bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer border-l-4 
+        ${color === 'blue' ? 'border-blue-500' : ''}
+        ${color === 'green' ? 'border-green-500' : ''}
+        ${color === 'purple' ? 'border-purple-500' : ''}
+        ${color === 'red' ? 'border-red-500' : ''}
+        ${color === 'gray' ? 'border-gray-500' : ''}`}
+    >
+      <div className="p-6 pt-5">
+        <div className="flex items-center">
+          <div
+            className={`
+              rounded-full p-3 mr-4 
+              ${color === 'blue' ? 'bg-blue-100' : ''}
+              ${color === 'green' ? 'bg-green-100' : ''}
+              ${color === 'purple' ? 'bg-purple-100' : ''}
+              ${color === 'red' ? 'bg-red-100' : ''}
+              ${color === 'gray' ? 'bg-gray-100' : ''}
+            `}
+          >
+            {icon}
+          </div>
+          <div>
+            <h3 className="font-medium text-gray-900">{title}</h3>
+            <p className="text-sm text-gray-500">{desc}</p>
+          </div>
         </div>
       </div>
-    </div>
-  </Link>
-);
+    </Wrapper>
+  );
+};
+
+
+
 
 const NavItem = ({ label, icon, isActive, onClick }) => {
   const classes = `w-full group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg ${
@@ -213,6 +381,10 @@ const NavItem = ({ label, icon, isActive, onClick }) => {
     </div>
   );
 };
+
+
+// {'--------------------------------------------Side Bar Start--------------------------------'}
+
 
 const Sidebar = ({ onSelect, selectedPanel }) => {
   return (
@@ -252,8 +424,18 @@ const Sidebar = ({ onSelect, selectedPanel }) => {
               isActive={selectedPanel === 'Location'}
               onClick={() => onSelect('Location')}
             />
-            <Link to="/patient-search"><NavItem label="Search" icon={<Search className="h-5 w-5 mr-2" />} /></Link>
-            <Link to="/patient-reports"><NavItem label="Reports" icon={<FileText className="h-5 w-5 mr-2" />} /></Link>
+            <NavItem 
+              label="Search" 
+              icon={<Search className="h-5 w-5 mr-2" />} 
+              isActive={selectedPanel === 'Search'}
+              onClick={() => onSelect('Search')}
+              />
+            <NavItem 
+              label="Reports" 
+              icon={<FileText className="h-5 w-5 mr-2" />} 
+              isActive={selectedPanel === 'Report'}
+              onClick={() => onSelect('Report')}
+              />
             <div className="relative">
               <Link to="/patient-notifications">
                 <NavItem label="Notifications" icon={<Bell className="h-5 w-5 mr-2" />} />
@@ -289,16 +471,47 @@ const Sidebar = ({ onSelect, selectedPanel }) => {
   );
 };
 
+// {'--------------------------------------------Side Bar End--------------------------------'}
+
+
 const UserDashboard = () => {
-  const [selectedPanel, setSelectedPanel] = useState<'dashboard' | 'Appointment' | 'Location'>('dashboard');
+    const initialPanel = (localStorage.getItem('selectedPanel') as 'dashboard' | 'Appointment' | 'Location' | 'Search' | 'Report') || 'dashboard';
+  const [selectedPanel, setSelectedPanel] = useState<'dashboard' | 'Appointment' | 'Location' | 'Search' | 'Report'>(initialPanel);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+ 
+
+// Filter logic for upcoming appointments
+const filteredAppointments = appointments.filter((appt) =>
+  appt.doctor.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  appt.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  appt.location.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
+// Filter logic for past appointments
+const filteredPastAppointments = pastAppointments.filter((appt) =>
+  appt.doctor.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  (appt.specialty || appt.specialization || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+  appt.location.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
+
   const [activeTab, setActiveTab] = useState<'doctors' | 'hospitals'>('doctors');
   const { toast } = useToast();
+
+  
+
+
+useEffect(() => {
+    localStorage.setItem('selectedPanel', selectedPanel);
+  }, [selectedPanel]);
 
   return (
     <div className="flex">
       <Sidebar selectedPanel={selectedPanel} onSelect={setSelectedPanel} />
       <main className="ml-64 w-full bg-grey min-h-screen p-6">
+
+        {/* // {'--------------------------------------------Dashboard Start--------------------------------'} */}
         {selectedPanel === 'dashboard' && (
           <>
             {/* Welcome message */}
@@ -309,10 +522,38 @@ const UserDashboard = () => {
 
             {/* Dashboard cards */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-              <DashboardCard icon={<MapPin className="h-6 w-6 text-blue-600" />} color="blue" title="Near Me" desc="Find doctors & clinics nearby" to="/patient-locations" />
-              <DashboardCard icon={<Calendar className="h-6 w-6 text-green-600" />} color="green" title="Appointments" desc="View & manage appointments" to="/patient-appointments" />
-              <DashboardCard icon={<Search className="h-6 w-6 text-purple-600" />} color="purple" title="Search" desc="Find doctors & hospitals" to="/patient-search" />
-              <DashboardCard icon={<FileText className="h-6 w-6 text-amber-600" />} color="amber" title="Reports" desc="Upload & view medical reports" to="/patient-reports" />
+           <DashboardCard
+  icon={<MapPin className="h-6 w-6 text-blue-600" />}
+  color="blue"
+  title="Near Me"
+  desc="Find doctors & clinics nearby"
+  onClick={() => setSelectedPanel('Location')}
+/>
+
+<DashboardCard
+  icon={<Calendar className="h-6 w-6 text-green-600" />}
+  color="green"
+  title="Appointments"
+  desc="View & manage appointments"
+  onClick={() => setSelectedPanel('Appointment')}
+/>
+
+<DashboardCard
+  icon={<Search className="h-6 w-6 text-purple-600" />}
+  color="purple"
+  title="Search"
+  desc="Find doctors & hospitals"
+  onClick={() => setSelectedPanel('Search')}
+/>
+
+<DashboardCard
+  icon={<FileText className="h-6 w-6 text-red-600" />}
+  color="red"
+  title="Reports"
+  desc="Upload & view medical reports"
+  onClick={() => setSelectedPanel('Report')}
+/>
+
             </div>
 
             {/* Appointments */}
@@ -321,9 +562,14 @@ const UserDashboard = () => {
     <div className="mb-8">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-gray-900">Upcoming Appointments</h2>
-        <Link to="/patient-search" className="text-sm text-fikar-primary hover:underline flex items-center">
-                  View all <ChevronRight className="h-4 w-4 ml-1" />
-                </Link>
+      <Link
+      to="#"
+  onClick={() => setSelectedPanel('Appointment')}
+  className="text-sm text-fikar-primary hover:underline flex items-center"
+>
+  View all <ChevronRight className="h-4 w-4 ml-1" />
+</Link>
+
       </div>
 
       <div className="space-y-4">
@@ -502,6 +748,12 @@ const UserDashboard = () => {
             </div>
           </>
         )}
+
+        
+{/* {'--------------------------------------------Dashboard End--------------------------------'} */}
+
+{/* {'--------------------------------------------Appointment Start--------------------------------'} */}
+
         {selectedPanel === 'Appointment' && (
           <>
              
@@ -528,12 +780,13 @@ const UserDashboard = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
-                  className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background 
-                  placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring 
-                  focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-9 w-full sm:w-80"
-                  placeholder="Search by doctor, specialty, hospital..."
-                  value=""
-                />
+  className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background 
+    placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring 
+    focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-9 w-full sm:w-80"
+  placeholder="Search by doctor, specialty, hospital..."
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+/>
               </div>
             </div>
 
@@ -692,6 +945,12 @@ const UserDashboard = () => {
 
           </>
         )}
+        
+{/* {'--------------------------------------------Appointment Finish--------------------------------'} */}
+
+
+{/* {'--------------------------------------------Location Start--------------------------------'} */}
+
         {selectedPanel === 'Location' && (
   <>
     <div className="mb-6">
@@ -736,8 +995,8 @@ const UserDashboard = () => {
           }
           className={`inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border h-9 rounded-md px-3 flex-shrink-0 ${
             selectedFilter === filter
-              ? 'bg-accent text-accent-foreground border-accent'
-              : 'bg-background hover:bg-accent hover:text-accent-foreground hover:border-accent border-input'
+              ? 'bg-primary text-primary-foreground border-primary'
+              : 'bg-background hover:bg-primary hover:text-primary-foreground hover:border-primary border-input'
           }`}
         >
           <Filter className="h-4 w-4 mr-1" />
@@ -971,26 +1230,310 @@ const UserDashboard = () => {
         {activeTab === 'hospitals' && (
           <div role="tabpanel" className="space-y-4">
             {/* Hospital cards go here */}
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4">
-              <h3 className="text-lg font-medium text-gray-900">City Heart Hospital</h3>
-              <p className="text-sm text-gray-500">Cardiology, 24/7 Emergency</p>
-              <p className="text-sm text-gray-400">2.1 km</p>
+            
+    <div className="mt-4 space-y-4">
+      {hospitals.map((hospital) => (
+        <div
+          key={hospital.id}
+          className="rounded-lg border bg-white text-gray-900 shadow-sm"
+        >
+          <div className="flex flex-col sm:flex-row p-4">
+            <div className="sm:w-32 sm:h-24 h-20 w-full bg-gray-200 self-center sm:self-start mb-4 sm:mb-0 flex-shrink-0 rounded-md overflow-hidden flex items-center justify-center">
+              <Hospital className="h-10 w-10 opacity-50 text-gray-500" />
             </div>
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4">
-              <h3 className="text-lg font-medium text-gray-900">Skin & Wellness Clinic</h3>
-              <p className="text-sm text-gray-500">Dermatology, Laser Treatment</p>
-              <p className="text-sm text-gray-400">3.8 km</p>
+            <div className="sm:ml-6 flex-1">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3">
+                <div>
+                  <h3 className="text-lg font-medium">{hospital.name}</h3>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {hospital.specialties.map((spec, i) => (
+                      <div
+                        key={i}
+                        className="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold text-xs"
+                      >
+                        {spec}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center mt-2 sm:mt-0">
+                  <Star className="h-4 w-4 text-yellow-400" />
+                  <span className="ml-1 text-sm font-medium">{hospital.rating}</span>
+                  <span className="mx-2 text-gray-300">|</span>
+                  <Navigation className="h-4 w-4 text-gray-400" />
+                  <span className="ml-1 text-sm text-gray-500">{hospital.distance}</span>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4 mb-3">
+                <div className="flex items-center">
+                  <Clock className="h-4 w-4 text-gray-400 mr-1" />
+                  <span className="text-sm">{hospital.hours}</span>
+                </div>
+                <div className="flex items-center">
+                  <Phone className="h-4 w-4 text-gray-400 mr-1" />
+                  <span className="text-sm">{hospital.phone}</span>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap sm:justify-start justify-center gap-2 mt-2">
+                <button className="inline-flex items-center text-sm font-medium border h-9 rounded-md px-3 hover:bg-gray-100">
+                  <Phone className="h-4 w-4 mr-1" />Call
+                </button>
+                <button className="inline-flex items-center text-sm font-medium border h-9 rounded-md px-3 hover:bg-gray-100">
+                  <MapPin className="h-4 w-4 mr-1" />Directions
+                </button>
+                <Link
+                  to={hospital.url}
+                  className="inline-flex items-center text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 shadow-sm h-10 px-4 py-2 rounded-md"
+                >
+                  View Details
+                </Link>
+              </div>
             </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+
           </div>
         )}
       </div>
     </div>
-  
-
 
   </>
 )}
 
+{/* {'--------------------------------------------Location Finish--------------------------------'} */}
+
+{/* {'--------------------------------------------Search Start --------------------------------'} */}
+
+    {selectedPanel === "Search" && (
+  <>
+   <div className="mb-6">
+      <h1 className="text-2xl font-bold text-gray-900">Find Doctors &amp; Hospitals</h1>
+      <p className="mt-1 text-gray-600">
+        Search for the best healthcare services near you
+      </p>
+    </div>
+     <div className="mb-6">
+      <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+        <div className="p-4">
+          {/* Search Input */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by doctor, specialty, hospital or symptom..."
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-10 pr-10"
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-between mt-4">
+            <button className="flex items-center text-sm text-gray-600 hover:text-fikar-primary">
+              <Filter className="h-4 w-4 mr-1" />
+              Advanced Filters
+              <ChevronDown className="h-4 w-4 ml-1" />
+            </button>
+
+            <button className="flex items-center text-sm text-fikar-primary">
+              <MapPin className="h-4 w-4 mr-1" />
+              Use current location
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div className="mb-8">
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">Popular Specialties</h2>
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
+        {specialties.map((specialty, index) => (
+          <div
+            key={index}
+            className="rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow cursor-pointer border-transparent hover:border-fikar-primary/30"
+          >
+            <div className="p-4 flex flex-col items-center text-center">
+              <div className="text-3xl mb-2">{specialty.emoji}</div>
+              <h3 className="text-sm font-medium text-gray-900">{specialty.name}</h3>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    
+<div>
+  <div className="inline-flex w-full bg-white rounded-md mb-6 h-10 items-center p-1 justify-center text-muted-foreground">
+    <button
+      onClick={() => setActiveTab("doctors")}
+      className={`flex-1 inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-sm transition-all ${
+        activeTab === "doctors" ? "bg-background text-foreground shadow-sm" : ""
+      }`}
+    >
+      <Stethoscope className="h-4 w-4 mr-2" />
+      Doctors
+    </button>
+    <button
+      onClick={() => setActiveTab("hospitals")}
+      className={`flex-1 inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-sm transition-all ${
+        activeTab === "hospitals" ? "bg-background text-foreground shadow-sm" : ""
+      }`}
+    >
+      <MapPin className="h-4 w-4 mr-2" />
+      Hospitals
+    </button>
+  </div>
+
+  {activeTab === "doctors" ? (
+    <div className="space-y-4">
+      {doctors.map((doc) => (
+        <div
+          key={doc.id}
+          className="rounded-lg border bg-white text-gray-800 shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between"
+        >
+          <div className="flex items-start">
+            <div className="relative flex shrink-0 overflow-hidden rounded-full h-16 w-16 border-2 border-blue-200 bg-muted items-center justify-center text-lg font-semibold text-gray-700 mr-4">
+              {doc.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .toUpperCase()}
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">{doc.name}</h3>
+              <p className="text-sm text-gray-600 mt-1">{doc.specialization}</p>
+              <div className="flex items-center mt-1 text-sm text-gray-700">
+                <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                <span className="ml-1 font-medium">{doc.rating}</span>
+                <span className="mx-2 text-gray-300">•</span>
+                <span className="text-gray-500">{doc.experience}</span>
+              </div>
+              <div className="mt-2 flex items-center text-sm text-gray-500">
+                <MapPin className="h-4 w-4 text-gray-400 mr-1" />
+                {doc.location}
+              </div>
+              <div className="mt-3">
+                <p className="text-sm text-gray-500">Consultation Fee</p>
+                <p className="font-semibold text-blue-600">{doc.fee}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 sm:mt-0 sm:text-right flex flex-col items-start sm:items-end pr-6">
+            <div className="flex items-start mb-32">
+               <span className="mr-2 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                 {doc.availability} 
+                </span>
+             
+              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full border text-gray-700">
+                {doc.distance}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <button className="inline-flex items-center gap-2 border h-9 rounded-md px-3 hover:bg-accent transition-all text-sm">
+                <Clock className="h-4 w-4" />
+                See Availability
+              </button>
+              <Link
+                to={`/patient-book/${doc.id}`}
+                className="inline-flex items-center gap-2 h-9 rounded-md px-3 bg-blue-600 text-white hover:bg-blue-700 transition-all text-sm"
+              >
+                <Calendar className="h-4 w-4" />
+                Book Appointment
+              </Link>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    
+    <div className="space-y-4">
+      {hospitalname.map((hospital) => (
+        <div
+          key={hospital.id}
+          className="rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div className="p-4">
+            <div className="flex flex-col sm:flex-row">
+              <div className="mb-4 sm:mb-0 sm:mr-4 sm:w-1/4 md:w-1/5">
+                <div className="aspect-video rounded-md overflow-hidden bg-gray-100">
+                  <img src={hospital.image} alt={hospital.name} className="w-full h-full object-cover" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <a
+                      className="text-lg font-semibold text-gray-900 hover:text-fikar-primary"
+                      href={`/patient-hospital/${hospital.id}`}
+                    >
+                      {hospital.name}
+                    </a>
+                    <p className="text-sm text-gray-500 mt-1">{hospital.specialty}</p>
+                    <div className="flex items-center mt-1 text-sm">
+                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                      <span className="ml-1 font-medium text-gray-700">{hospital.rating}</span>
+                      <span className="mx-2 text-gray-300">•</span>
+                      <span className="text-gray-500">{hospital.doctors} Doctors</span>
+                    </div>
+                  </div>
+                  <div className="mt-2 sm:mt-0">
+                    <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold border-gray-200 text-gray-700">
+                      {hospital.distance}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center text-sm text-gray-500">
+                  <MapPin className="h-4 w-4 text-gray-400 mr-1" />
+                  {hospital.location}
+                </div>
+                <div className="mt-3">
+                  <p className="text-sm text-gray-500 mb-1">Facilities</p>
+                  <div className="flex flex-wrap gap-2">
+                    {hospital.facilities.map((facility, index) => (
+                      <div
+                        key={index}
+                        className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-gray-50"
+                      >
+                        {facility}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-3 pt-3 flex justify-end">
+                  <a
+                    className="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md h-10 px-4 py-2"
+                    href={`/patient-hospital/${hospital.id}`}
+                  >
+                    View Hospital
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
+    </>
+    )}
+{/* {'--------------------------------------------Search Finish--------------------------------'} */}
+
+
+{/* {'--------------------------------------------Report  Start--------------------------------'} */}
+
+{selectedPanel === 'Report' && (
+          <>
+              
+          </>
+        )}
       </main>
     </div>
   );
