@@ -1,10 +1,11 @@
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Search,Calendar,
   ChevronRight,
+  ChevronLeft,
   MapPin,
   FileText,
   User,
@@ -25,16 +26,53 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import heart from '../assests/Specility images/heart.png';
+import brain from '../assests/Specility images/brain.png';
+import teeth from '../assests/Specility images/teeth.png';
+import bones from '../assests/Specility images/bones.png';
+import general from '../assests/Specility images/general.png';
+import skin from '../assests/Specility images/skin.png';
+import child from '../assests/Specility images/child.png';
+import cancer from '../assests/Specility images/cancer.png';
+import eye from '../assests/Specility images/eye.png';
+import women from '../assests/Specility images/women.png';
+import hormones from '../assests/Specility images/hormones.png';
+// import heart from '../assests/Specility images/heart.png';
+// import heart from '../assests/Specility images/heart.png';
+// import heart from '../assests/Specility images/heart.png';
+// import heart from '../assests/Specility images/heart.png';
+// import heart from '../assests/Specility images/heart.png';
+// import heart from '../assests/Specility images/heart.png';
+// import heart from '../assests/Specility images/heart.png';
+// import heart from '../assests/Specility images/heart.png';
+// import heart from '../assests/Specility images/heart.png';
+// import heart from '../assests/Specility images/heart.png';
+// import heart from '../assests/Specility images/heart.png';
+// import heart from '../assests/Specility images/heart.png';
+
 
 const notificationCount = 3;
 //  use in search
 const specialties = [
-  { emoji: '❤️', name: 'Cardiology' },
-  { emoji: '🧴', name: 'Dermatology' },
-  { emoji: '🦴', name: 'Orthopedics' },
-  { emoji: '👶', name: 'Pediatrics' },
-  { emoji: '👩', name: 'Gynecology' },
-  { emoji: '🧠', name: 'Neurology' },
+  { image: heart, name: 'Heart' },
+  { image: brain, name: 'Brain' },
+  { image: teeth, name: 'Teeth & Mouth' },
+  { image: bones, name: 'Bones & Joints' },
+  { image: brain, name: 'Brain' },
+  { image: brain, name: 'Brain' },
+  { image: brain, name: 'Brain' },
+  { image: brain, name: 'Brain' },
+  { image: brain, name: 'Brain' },
+  { image: brain, name: 'Brain' },
+  { image: brain, name: 'Brain' },
+  { image: brain, name: 'Brain' },
+  { image: brain, name: 'Brain' },
+  { image: brain, name: 'Brain' },
+  { image: brain, name: 'Brain' },
+  { image: brain, name: 'Brain' },
+  { image: brain, name: 'Brain' },
+  
+  
 ];
 // use in search
 const hospitalname = [
@@ -475,7 +513,7 @@ const Sidebar = ({ onSelect, selectedPanel }) => {
 
 
 const UserDashboard = () => {
-    const initialPanel = (localStorage.getItem('selectedPanel') as 'dashboard' | 'Appointment' | 'Location' | 'Search' | 'Report') || 'dashboard';
+    const initialPanel = (localStorage.getItem('selectedPanel') as 'dashboard' | 'Appointment' | 'Location' | 'Search' | 'Report') || 'Search';
   const [selectedPanel, setSelectedPanel] = useState<'dashboard' | 'Appointment' | 'Location' | 'Search' | 'Report'>(initialPanel);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -494,6 +532,22 @@ const filteredHospitals = hospitalname.filter((hospital) =>
 );
 
   const { toast } = useToast();
+
+  // used in Search Pannel
+    const scrollRef = useRef(null);
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -500, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 500, behavior: 'smooth' });
+    }
+  };
+
 
   
 
@@ -1305,37 +1359,34 @@ useEffect(() => {
 
 {/* {'--------------------------------------------Search Start --------------------------------'} */}
 
-    {selectedPanel === "Search" && (
+   {selectedPanel === "Search" && (
   <>
-   <div className="mb-6">
-      <h1 className="text-2xl font-bold text-gray-900">Find Doctors &amp; Hospitals</h1>
-      <p className="mt-1 text-gray-600">
-        Search for the best healthcare services near you
-      </p>
-    </div>
-     <div className="mb-6">
+    <div className="w-full overflow-x-hidden"> {/* Wrapper prevents horizontal scroll */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Find Doctors & Hospitals</h1>
+        <p className="mt-1 text-gray-600">Search for the best healthcare services near you</p>
+      </div>
+
+      {/* Search Box Section */}
       <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
         <div className="p-4">
-          {/* Search Input */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
-             type="text"
-            placeholder="Search by doctor, specialty, hospital or symptom..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-10 pr-10"
-/>
+              type="text"
+              placeholder="Search by doctor, specialty, hospital or symptom..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-10 pr-10"
+            />
           </div>
 
-          {/* Buttons */}
           <div className="flex justify-between mt-4">
             <button className="flex items-center text-sm text-gray-600 hover:text-fikar-primary">
               <Filter className="h-4 w-4 mr-1" />
               Advanced Filters
               <ChevronDown className="h-4 w-4 ml-1" />
             </button>
-
             <button className="flex items-center text-sm text-fikar-primary">
               <MapPin className="h-4 w-4 mr-1" />
               Use current location
@@ -1343,266 +1394,214 @@ useEffect(() => {
           </div>
         </div>
       </div>
-    </div>
 
-    
-    <div className="mb-8">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Popular Specialties</h2>
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
-        {specialties.map((specialty, index) => (
-          <div
-            key={index}
-            className="rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow cursor-pointer border-transparent hover:border-fikar-primary/30"
+      {/* Popular Specialties Section */}
+      <div className="mb-8">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Popular Specialties</h2>
+        <div className="relative overflow-hidden">
+          <button
+            onClick={scrollLeft}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white border shadow rounded-full p-1 hover:bg-gray-100"
           >
-            <div className="p-4 flex flex-col items-center text-center">
-              <div className="text-3xl mb-2">{specialty.emoji}</div>
-              <h3 className="text-sm font-medium text-gray-900">{specialty.name}</h3>
-            </div>
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          <div
+            ref={scrollRef}
+            className="flex space-x-4 overflow-x-auto scroll-smooth pl-4 pr-4 max-w-full"
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+            onWheel={(e) => {
+              e.currentTarget.scrollLeft += e.deltaY;
+            }}
+          >
+            {specialties.map((specialty, index) => (
+              <div
+                key={index}
+                className="min-w-[120px] flex-shrink-0 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow cursor-pointer border-transparent hover:border-fikar-primary/30"
+              >
+                <div className="p-2 flex flex-col items-center text-center">
+                  <img src={specialty.image} alt={specialty.name} className="h-10 w-10 mb-2" />
+                  <h3 className="text-sm font-medium text-gray-900">{specialty.name}</h3>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+
+          {/* Hide scrollbar for all browsers */}
+          <style>{`div::-webkit-scrollbar { display: none; }`}</style>
+
+          <button
+            onClick={scrollRight}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white border shadow rounded-full p-1 hover:bg-gray-100"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Tabs: All / Doctors / Hospitals */}
+      <div className="inline-flex w-full bg-white rounded-md mb-6 h-10 items-center p-1 justify-center text-muted-foreground">
+        <button
+          onClick={() => setActiveTab("all")}
+          className={`px-4 py-2 rounded-md ${activeTab === "all" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}
+        >
+          All
+        </button>
+        <button
+          onClick={() => setActiveTab("doctors")}
+          className={`flex-1 inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-sm transition-all ${
+            activeTab === "doctors" ? "bg-background text-foreground shadow-sm" : ""
+          }`}
+        >
+          <Stethoscope className="h-4 w-4 mr-2" />
+          Doctors
+        </button>
+        <button
+          onClick={() => setActiveTab("hospitals")}
+          className={`flex-1 inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-sm transition-all ${
+            activeTab === "hospitals" ? "bg-background text-foreground shadow-sm" : ""
+          }`}
+        >
+          <MapPin className="h-4 w-4 mr-2" />
+          Hospitals
+        </button>
+      </div>
+
+      {/* Doctor or Hospital Listing */}
+      <div className="space-y-4">
+        {activeTab !== "hospitals" &&
+          filteredDoctors.map((doc) => (
+            <div
+              key={doc.id}
+              className="rounded-lg border bg-white text-gray-800 shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between"
+            >
+              <div className="flex items-start">
+                <div className="relative flex shrink-0 overflow-hidden rounded-full h-16 w-16 border-2 border-blue-200 bg-muted items-center justify-center text-lg font-semibold text-gray-700 mr-4">
+                  {doc.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join(" ")
+                    .toUpperCase()}
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">{doc.name}</h3>
+                  <p className="text-sm text-gray-600 mt-1">{doc.specialization}</p>
+                  <div className="flex items-center mt-1 text-sm text-gray-700">
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    <span className="ml-1 font-medium">{doc.rating}</span>
+                    <span className="mx-2 text-gray-300">•</span>
+                    <span className="text-gray-500">{doc.experience}</span>
+                  </div>
+                  <div className="mt-2 flex items-center text-sm text-gray-500">
+                    <MapPin className="h-4 w-4 text-gray-400 mr-1" />
+                    {doc.location}
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-sm text-gray-500">Consultation Fee</p>
+                    <p className="font-semibold text-blue-600">{doc.fee}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 sm:mt-0 sm:text-right flex flex-col items-start sm:items-end pr-6">
+                <div className="flex items-start mb-32">
+                  <span className="mr-2 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                    {doc.availability}
+                  </span>
+                  <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full border text-gray-700">
+                    {doc.distance}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <button className="inline-flex items-center gap-2 border h-9 rounded-md px-3 hover:bg-accent transition-all text-sm">
+                    <Clock className="h-4 w-4" />
+                    See Availability
+                  </button>
+                  <Link
+                    to={`/patient-book/${doc.id}`}
+                    className="inline-flex items-center gap-2 h-9 rounded-md px-3 bg-blue-600 text-white hover:bg-blue-700 transition-all text-sm"
+                  >
+                    <Calendar className="h-4 w-4" />
+                    Book Appointment
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
+
+        {activeTab === "hospitals" &&
+          filteredHospitals.map((hospital) => (
+            <div
+              key={hospital.id}
+              className="rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="p-4">
+                <div className="flex flex-col sm:flex-row">
+                  <div className="mb-4 sm:mb-0 sm:mr-4 sm:w-1/4 md:w-1/5">
+                    <div className="aspect-video rounded-md overflow-hidden bg-gray-100">
+                      <img src={hospital.image} alt={hospital.name} className="w-full h-full object-cover" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <a
+                          className="text-lg font-semibold text-gray-900 hover:text-fikar-primary"
+                          href={`/patient-hospital/${hospital.id}`}
+                        >
+                          {hospital.name}
+                        </a>
+                        <p className="text-sm text-gray-500 mt-1">{hospital.specialty}</p>
+                        <div className="flex items-center mt-1 text-sm">
+                          <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                          <span className="ml-1 font-medium text-gray-700">{hospital.rating}</span>
+                          <span className="mx-2 text-gray-300">•</span>
+                          <span className="text-gray-500">{hospital.doctors} Doctors</span>
+                        </div>
+                      </div>
+                      <div className="mt-2 sm:mt-0">
+                        <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold border-gray-200 text-gray-700">
+                          {hospital.distance}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-3 flex items-center text-sm text-gray-500">
+                      <MapPin className="h-4 w-4 text-gray-400 mr-1" />
+                      {hospital.location}
+                    </div>
+                    <div className="mt-3">
+                      <p className="text-sm text-gray-500 mb-1">Facilities</p>
+                      <div className="flex flex-wrap gap-2">
+                        {hospital.facilities.map((facility, index) => (
+                          <div
+                            key={index}
+                            className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-gray-50"
+                          >
+                            {facility}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="mt-3 pt-3 flex justify-end">
+                      <a
+                        className="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md h-10 px-4 py-2"
+                        href={`/patient-hospital/${hospital.id}`}
+                      >
+                        View Hospital
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
       </div>
     </div>
-
-    
-<div>
-  <div className="inline-flex w-full bg-white rounded-md mb-6 h-10 items-center p-1 justify-center text-muted-foreground">
-     <button
-    onClick={() => setActiveTab("all")}
-    className={`px-4 py-2 rounded-md ${activeTab === "all" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}
-  >
-    All
-  </button>
-    <button
-      onClick={() => setActiveTab("doctors")}
-      className={`flex-1 inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-sm transition-all ${
-        activeTab === "doctors" ? "bg-background text-foreground shadow-sm" : ""
-      }`}
-    >
-      <Stethoscope className="h-4 w-4 mr-2" />
-      Doctors
-    </button>
-    <button
-      onClick={() => setActiveTab("hospitals")}
-      className={`flex-1 inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-sm transition-all ${
-        activeTab === "hospitals" ? "bg-background text-foreground shadow-sm" : ""
-      }`}
-    >
-      <MapPin className="h-4 w-4 mr-2" />
-      Hospitals
-    </button>
-  </div>
-
-  
-
-  {activeTab === "all" && (
-  <div className="space-y-4">
-    {/* Show all doctors */}
-    {filteredDoctors.map((doc) => (
-      <div
-        key={doc.id}
-        className="rounded-lg border bg-white text-gray-800 shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between"
-      >
-        <div className="flex items-start">
-          <div className="relative flex shrink-0 overflow-hidden rounded-full h-16 w-16 border-2 border-blue-200 bg-muted items-center justify-center text-lg font-semibold text-gray-700 mr-4">
-            {doc.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .toUpperCase()}
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">{doc.name}</h3>
-            <p className="text-sm text-gray-600 mt-1">{doc.specialization}</p>
-            <div className="flex items-center mt-1 text-sm text-gray-700">
-              <Star className="h-4 w-4 text-yellow-400 fill-current" />
-              <span className="ml-1 font-medium">{doc.rating}</span>
-              <span className="mx-2 text-gray-300">•</span>
-              <span className="text-gray-500">{doc.experience}</span>
-            </div>
-            <div className="mt-2 flex items-center text-sm text-gray-500">
-              <MapPin className="h-4 w-4 text-gray-400 mr-1" />
-              {doc.location}
-            </div>
-            <div className="mt-3">
-              <p className="text-sm text-gray-500">Consultation Fee</p>
-              <p className="font-semibold text-blue-600">{doc.fee}</p>
-            </div>
-          </div>
-        </div>
-        <div className="mt-4 sm:mt-0 sm:text-right flex flex-col items-start sm:items-end pr-6">
-          <div className="flex items-start mb-32">
-            <span className="mr-2 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-              {doc.availability}
-            </span>
-            <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full border text-gray-700">
-              {doc.distance}
-            </span>
-          </div>
-          <div className="flex gap-2">
-            <button className="inline-flex items-center gap-2 border h-9 rounded-md px-3 hover:bg-accent transition-all text-sm">
-              <Clock className="h-4 w-4" />
-              See Availability
-            </button>
-            <Link
-              to={`/patient-book/${doc.id}`}
-              className="inline-flex items-center gap-2 h-9 rounded-md px-3 bg-blue-600 text-white hover:bg-blue-700 transition-all text-sm"
-            >
-              <Calendar className="h-4 w-4" />
-              Book Appointment
-            </Link>
-          </div>
-        </div>
-      </div>
-    ))}
-
-    
-    
-  
-  </div>
+  </>
 )}
 
-  
-  
-  
-  {activeTab === "doctors" ? (
-    <div className="space-y-4">
-      {filteredDoctors.map((doc) => (
-
-        <div
-          key={doc.id}
-          className="rounded-lg border bg-white text-gray-800 shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between"
-        >
-          <div className="flex items-start">
-            <div className="relative flex shrink-0 overflow-hidden rounded-full h-16 w-16 border-2 border-blue-200 bg-muted items-center justify-center text-lg font-semibold text-gray-700 mr-4">
-              {doc.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .toUpperCase()}
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">{doc.name}</h3>
-              <p className="text-sm text-gray-600 mt-1">{doc.specialization}</p>
-              <div className="flex items-center mt-1 text-sm text-gray-700">
-                <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                <span className="ml-1 font-medium">{doc.rating}</span>
-                <span className="mx-2 text-gray-300">•</span>
-                <span className="text-gray-500">{doc.experience}</span>
-              </div>
-              <div className="mt-2 flex items-center text-sm text-gray-500">
-                <MapPin className="h-4 w-4 text-gray-400 mr-1" />
-                {doc.location}
-              </div>
-              <div className="mt-3">
-                <p className="text-sm text-gray-500">Consultation Fee</p>
-                <p className="font-semibold text-blue-600">{doc.fee}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4 sm:mt-0 sm:text-right flex flex-col items-start sm:items-end pr-6">
-            <div className="flex items-start mb-32">
-               <span className="mr-2 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                 {doc.availability} 
-                </span>
-             
-              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full border text-gray-700">
-                {doc.distance}
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <button className="inline-flex items-center gap-2 border h-9 rounded-md px-3 hover:bg-accent transition-all text-sm">
-                <Clock className="h-4 w-4" />
-                See Availability
-              </button>
-              <Link
-                to={`/patient-book/${doc.id}`}
-                className="inline-flex items-center gap-2 h-9 rounded-md px-3 bg-blue-600 text-white hover:bg-blue-700 transition-all text-sm"
-              >
-                <Calendar className="h-4 w-4" />
-                Book Appointment
-              </Link>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  ) : (
-    
-    <div className="space-y-4">
-      {filteredHospitals.map((hospital) => (
-
-        <div
-          key={hospital.id}
-          className="rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow"
-        >
-          <div className="p-4">
-            <div className="flex flex-col sm:flex-row">
-              <div className="mb-4 sm:mb-0 sm:mr-4 sm:w-1/4 md:w-1/5">
-                <div className="aspect-video rounded-md overflow-hidden bg-gray-100">
-                  <img src={hospital.image} alt={hospital.name} className="w-full h-full object-cover" />
-                </div>
-              </div>
-              <div className="flex-1">
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <a
-                      className="text-lg font-semibold text-gray-900 hover:text-fikar-primary"
-                      href={`/patient-hospital/${hospital.id}`}
-                    >
-                      {hospital.name}
-                    </a>
-                    <p className="text-sm text-gray-500 mt-1">{hospital.specialty}</p>
-                    <div className="flex items-center mt-1 text-sm">
-                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                      <span className="ml-1 font-medium text-gray-700">{hospital.rating}</span>
-                      <span className="mx-2 text-gray-300">•</span>
-                      <span className="text-gray-500">{hospital.doctors} Doctors</span>
-                    </div>
-                  </div>
-                  <div className="mt-2 sm:mt-0">
-                    <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold border-gray-200 text-gray-700">
-                      {hospital.distance}
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-3 flex items-center text-sm text-gray-500">
-                  <MapPin className="h-4 w-4 text-gray-400 mr-1" />
-                  {hospital.location}
-                </div>
-                <div className="mt-3">
-                  <p className="text-sm text-gray-500 mb-1">Facilities</p>
-                  <div className="flex flex-wrap gap-2">
-                    {hospital.facilities.map((facility, index) => (
-                      <div
-                        key={index}
-                        className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-gray-50"
-                      >
-                        {facility}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="mt-3 pt-3 flex justify-end">
-                  <a
-                    className="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md h-10 px-4 py-2"
-                    href={`/patient-hospital/${hospital.id}`}
-                  >
-                    View Hospital
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-      ))}
-    </div>
-  )}
-</div>
-
-    </>
-    )}
 {/* {'--------------------------------------------Search Finish--------------------------------'} */}
 
 
@@ -1610,7 +1609,7 @@ useEffect(() => {
 
 {selectedPanel === 'Report' && (
           <>
-              
+          
           </>
         )}
       </main>
