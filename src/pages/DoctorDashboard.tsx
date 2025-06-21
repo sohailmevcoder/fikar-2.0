@@ -44,7 +44,7 @@ const currentQueue = [
     age: 36,
     appointmentTime: '10:15 AM',
     status: 'completed',
-    waitTime: 'Completed',
+    waitTime: 'Completed (Current)',
     reason: 'Blood Pressure Check',
     phone: '+91 87654 32109',
     completedTime: '10:40 AM'
@@ -54,8 +54,8 @@ const currentQueue = [
     name: 'Rohan Gupta',
     age: 28,
     appointmentTime: '10:30 AM',
-    status: 'in-progress',
-    waitTime: '0 mins (Current)',
+    status: 'waiting',
+    waitTime: '~10 min ',
     reason: 'General Checkup',
     phone: '+91 76543 21098'
   },
@@ -101,6 +101,16 @@ const upcomingAppointments = [
     reason: 'Diabetes Follow-up',
     isNew: false,
     phone: '+91 32109 87654'
+  },
+  {
+    id: 8,
+    name: 'Sparsh Jain',
+    age: 20,
+    appointmentTime: '2:15 PM',
+    date: 'Tomorrow',
+    reason: 'Babasir',
+    isNew: false,
+    phone: '+91 32109 87654'
   }
 ];
 
@@ -116,6 +126,10 @@ const DoctorDashboard = () => {
   const [queueFilter, setQueueFilter] = useState<'all' | 'completed' | 'waiting'>('all');
   const { toast } = useToast();
   const queueRef = useRef<HTMLDivElement>(null);
+
+  const [appointmentStatus, setAppointmentStatus] = useState<{ [key: number]: 'accepted' | 'rejected' | null }>(
+    () => Object.fromEntries(upcomingAppointments.map((a) => [a.id, null]))
+  );
   
   const handleStatusChange = (status: 'available' | 'busy' | 'offline') => {
     setAvailabilityStatus(status);
@@ -131,6 +145,24 @@ const DoctorDashboard = () => {
       title: "Appointment Completed",
       description: `Consultation with ${patientName} has been marked as completed.`,
       variant: "default",
+    });
+  };
+
+  const handleAcceptAppointment = (id: number, name: string) => {
+    setAppointmentStatus(prev => ({ ...prev, [id]: 'accepted' }));
+    toast({
+      title: "Appointment Accepted",
+      description: `You have accepted the appointment with ${name}.`,
+      variant: "default",
+    });
+  };
+
+  const handleRejectAppointment = (id: number, name: string) => {
+    setAppointmentStatus(prev => ({ ...prev, [id]: 'rejected' }));
+    toast({
+      title: "Appointment Rejected",
+      description: `You have rejected the appointment with ${name}.`,
+      variant: "destructive",
     });
   };
 
@@ -457,11 +489,38 @@ const DoctorDashboard = () => {
                             <span className="font-medium">Reason:</span> {appointment.reason}
                           </p>
                         </div>
-                        
-                        <div className="flex space-x-2">
-                          <Button variant="outline" className="border-fikar-primary text-fikar-primary hover:bg-fikar-light">
-                            View History
-                          </Button>
+
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                          {appointmentStatus[appointment.id] === 'accepted' && (
+                            <Badge className="bg-green-100 text-green-700 border-0">Accepted</Badge>
+                          )}
+                          {appointmentStatus[appointment.id] === 'rejected' && (
+                            <Badge className="bg-red-100 text-red-700 border-0">Rejected</Badge>
+                          )}
+                          {appointmentStatus[appointment.id] === null && (
+                            <>
+                              <Button
+                                className="bg-green-600 hover:bg-green-700 text-white"
+                                onClick={() => handleAcceptAppointment(appointment.id, appointment.name)}
+                              >
+                                <CheckCircle className="h-4 w-4 mr-2" />
+                                Accept
+                              </Button>
+                              <Button
+                                className="bg-red-600 hover:bg-red-700 text-white"
+                                onClick={() => handleRejectAppointment(appointment.id, appointment.name)}
+                              >
+                                <XCircle className="h-4 w-4 mr-2" />
+                                Reject
+                              </Button>
+                            </>
+                          )}
+
+                          <div className="flex space-x-2">
+                            <Button variant="outline" className="border-fikar-primary text-fikar-primary hover:bg-fikar-light">
+                              View History
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </CardContent>
